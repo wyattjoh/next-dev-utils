@@ -1,0 +1,21 @@
+{
+  "name": "next-dev-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "clipboardy": "^3.0.0",
+    "conf": "^11.0.1",
+    "execa": "^7.1.1",
+    "inquirer": "^9.1.5",
+    "minio": "^7.0.33",
+    "ora": "^6.3.0",
+    "strip-indent": "^4.0.0",
+    "yargs": "^17.7.1"
+  }
+}
