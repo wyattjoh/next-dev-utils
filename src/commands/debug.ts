@@ -1,11 +1,11 @@
-// @ts-check
-
 import fs from "node:fs/promises";
 import path from "node:path";
 import ora from "ora";
-import * as next from "../lib/next.mjs";
 
-async function removeDotNextDirectory(nextProjectPath) {
+import * as next from "../lib/next.js";
+import * as node from "../lib/node.js";
+
+async function removeDotNextDirectory(nextProjectPath: string) {
   let spinner = ora("Removing existing .next directory").start();
   try {
     await fs.rm(path.join(nextProjectPath, ".next"), {
@@ -19,18 +19,18 @@ async function removeDotNextDirectory(nextProjectPath) {
   spinner.succeed();
 }
 
-/**
- *
- * @param {{ mode: "dev" | "build" | "start", "next-project-directory": string, rm?: boolean }} argv
- */
-export async function debugCommand(argv) {
+type Options = {
+  mode: "dev" | "build" | "start" | "standalone";
+  "next-project-directory": string;
+  rm?: boolean;
+};
+
+export async function debugCommand(argv: Options) {
   // Remove the existing .next directory from the project directory if it
   // exists.
   const nextProjectPath = argv["next-project-directory"];
 
-  if (argv.mode !== "start") {
-    await removeDotNextDirectory(nextProjectPath);
-  }
+  await removeDotNextDirectory(nextProjectPath);
 
   const controller = new AbortController();
   const { signal } = controller;
@@ -40,7 +40,11 @@ export async function debugCommand(argv) {
   });
 
   try {
-    if (argv.mode === "build") {
+    if (
+      argv.mode === "build" ||
+      argv.mode === "start" ||
+      argv.mode === "standalone"
+    ) {
       await next.debug(["build", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
@@ -49,12 +53,6 @@ export async function debugCommand(argv) {
     }
 
     if (argv.mode === "start") {
-      await next.default(["build", nextProjectPath], {
-        stdout: "inherit",
-        stderr: "inherit",
-        signal,
-      });
-
       await next.debug(["start", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
@@ -69,8 +67,22 @@ export async function debugCommand(argv) {
         signal,
       });
     }
+
+    if (argv.mode === "standalone") {
+      await node.debug(
+        [
+          // The standalone server is built in the .next/standalone directory.
+          path.join(nextProjectPath, ".next", "standalone", "server.js"),
+        ],
+        {
+          stdout: "inherit",
+          stderr: "inherit",
+          signal,
+        }
+      );
+    }
   } catch (err) {
-    if (!err.isCanceled) {
+    if (!(err as any).isCanceled) {
       throw err;
     }
   }

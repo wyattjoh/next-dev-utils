@@ -1,6 +1,4 @@
-// @ts-check
-
-import { createCommand } from "./execa.mjs";
+import { createCommand } from "./execa.js";
 
 export const pnpm = createCommand("pnpm");
 

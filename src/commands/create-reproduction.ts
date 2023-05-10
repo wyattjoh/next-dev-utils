@@ -1,12 +1,14 @@
-// @ts-check
-
 import fs from "node:fs/promises";
 import path from "node:path";
 
 import stripIndent from "strip-indent";
-import { getConfig } from "../lib/config.mjs";
+import { getConfig } from "../lib/config.js";
 
-export async function createReproduction(args) {
+type Options = {
+  name: string;
+};
+
+export async function createReproduction(args: Options) {
   // In the reproductions folder, create a folder with the name of the reproduction
   const reproduction = path.join(
     await getConfig("next_project_path"),

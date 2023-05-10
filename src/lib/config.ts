@@ -1,12 +1,9 @@
-// @ts-check
-
 import fs from "node:fs/promises";
 
 import inquirer from "inquirer";
 
-// @ts-expect-error
 import Conf from "conf";
-import { exists } from "./validators/exists.mjs";
+import { exists } from "./validators/exists.js";
 
 export const secrets = ["secret_key", "vercel_test_token"];
 
@@ -43,20 +40,14 @@ const validators = {
   next_project_path: exists,
 };
 
-/**
- *
- * @param {keyof typeof schema} key
- * @param {any} options
- * @returns
- */
-export async function getConfig(key, options = {}) {
+export async function getConfig(key: keyof typeof schema, options: any = {}) {
   let value = config.get(key);
   if (value) {
     if (key in validators) {
       try {
-        await validators[key](value);
+        await (validators as any)[key](value);
       } catch (err) {
-        console.error(err.message);
+        console.error((err as Error).message);
       }
     }
 
@@ -73,14 +64,14 @@ export async function getConfig(key, options = {}) {
   return input;
 }
 
-export async function prompt(key, options = {}) {
+export async function prompt(key: keyof typeof schema, options = {}) {
   const { input } = await inquirer.prompt({
     type: secrets.includes(key) ? "password" : "input",
     name: "input",
     message: `${key}:`,
     validate: async (value) => {
       if (key in validators) {
-        return await validators[key](value);
+        return await (validators as any)[key](value);
       }
 
       return true;

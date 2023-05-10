@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "bin": "./bin/next-dev-utils.js",
+  "scripts": {
+    "build": "tsc"
+  },
   "type": "module",
   "keywords": [],
   "author": "",
@@ -17,5 +20,12 @@
     "ora": "^6.3.0",
     "strip-indent": "^4.0.0",
     "yargs": "^17.7.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.3",
+    "@types/minio": "^7.0.18",
+    "@types/node": "^18.16.2",
+    "@types/yargs": "^17.0.24",
+    "typescript": "^5.0.4"
   }
 }
