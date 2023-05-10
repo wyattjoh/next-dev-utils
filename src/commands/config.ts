@@ -1,15 +1,13 @@
-// @ts-check
+import type { Arguments } from "yargs";
+import { config as Config, schema, prompt } from "../lib/config.js";
 
-import { config as Config, schema, prompt } from "../lib/config.mjs";
+type Options = Arguments<{
+  operation: "get" | "set";
+  key?: keyof typeof schema;
+  value?: string;
+}>;
 
-/**
- * @param {import("yargs").Arguments<{
- *  operation: "get"| "set",
- *  key?: keyof typeof import("../lib/config.mjs").schema,
- *  value?: string
- * }>} args
- */
-export async function config(args) {
+export async function config(args: Options) {
   if (args.operation === "get") {
     if (!args.key) {
       for (const key in schema) {

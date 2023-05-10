@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 
-// @ts-check
-
 import path from "node:path";
 
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { config } from "./commands/config.mjs";
+import { config } from "./commands/config.js";
 
-import { createReproduction } from "./commands/create-reproduction.mjs";
-import { debugCommand } from "./commands/debug.mjs";
-import { packNext } from "./commands/pack-next.mjs";
-import { testDeploy } from "./commands/test-deploy.mjs";
-import { getConfig, schema } from "./lib/config.mjs";
-import { exists } from "./lib/validators/exists.mjs";
+import { createReproduction } from "./commands/create-reproduction.js";
+import { debugCommand } from "./commands/debug.js";
+import { packNext } from "./commands/pack-next.js";
+import { testDeploy } from "./commands/test-deploy.js";
+import { getConfig, schema } from "./lib/config.js";
+import { exists } from "./lib/validators/exists.js";
 
 yargs(hideBin(process.argv))
   .command(
@@ -81,20 +79,23 @@ yargs(hideBin(process.argv))
     "update or get a config value",
     {
       operation: {
-        choices: ["get", "set"],
+        choices: ["get", "set"] as const,
         demand: true,
       },
       key: {
-        choices: Object.keys(schema),
+        choices: Object.keys(schema) as Array<keyof typeof schema>,
       },
     },
-    // @ts-expect-error
     config
   )
   .command(
     "create-reproduction <name>",
     "creates a bare-bones reproduction project",
     {
+      name: {
+        type: "string",
+        demand: true,
+      },
       "no-app-dir": {
         type: "boolean",
         default: false,
@@ -107,7 +108,7 @@ yargs(hideBin(process.argv))
     "debug a project with next",
     {
       mode: {
-        choices: /** @type {const} */ (["dev", "build", "start"]),
+        choices: ["dev", "build", "start", "standalone"] as const,
         demand: true,
       },
       "next-project-directory": {
@@ -124,8 +125,6 @@ yargs(hideBin(process.argv))
       return await debugCommand(argv);
     }
   )
-  .parserConfiguration({
-    "camel-case-expansion": false,
-  })
+  .parserConfiguration({ "camel-case-expansion": false })
   .demandCommand(1)
   .parse();

@@ -1,5 +1,3 @@
-// @ts-check
-
 import path from "node:path";
 import crypto from "node:crypto";
 import stream from "node:stream/promises";
@@ -10,8 +8,8 @@ import ora from "ora";
 import minio from "minio";
 import inquirer from "inquirer";
 
-import { pnpm } from "./pnpm.mjs";
-import { getConfig } from "./config.mjs";
+import { pnpm } from "./pnpm.js";
+import { getConfig } from "./config.js";
 
 export async function packNext() {
   let nextProjectPath = await getConfig("next_project_path");
