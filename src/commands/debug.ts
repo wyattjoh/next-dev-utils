@@ -20,7 +20,7 @@ async function removeDotNextDirectory(nextProjectPath: string) {
 }
 
 type Options = {
-  mode: "dev" | "build" | "start" | "standalone";
+  mode: "dev" | "build" | "start" | "prod" | "standalone";
   "next-project-directory": string;
   rm?: boolean;
 };
@@ -30,7 +30,9 @@ export async function debugCommand(argv: Options) {
   // exists.
   const nextProjectPath = argv["next-project-directory"];
 
-  await removeDotNextDirectory(nextProjectPath);
+  if (argv.mode !== "start") {
+    await removeDotNextDirectory(nextProjectPath);
+  }
 
   const controller = new AbortController();
   const { signal } = controller;
@@ -42,7 +44,7 @@ export async function debugCommand(argv: Options) {
   try {
     if (
       argv.mode === "build" ||
-      argv.mode === "start" ||
+      argv.mode === "prod" ||
       argv.mode === "standalone"
     ) {
       await next.debug(["build", nextProjectPath], {
@@ -52,7 +54,7 @@ export async function debugCommand(argv: Options) {
       });
     }
 
-    if (argv.mode === "start") {
+    if (argv.mode === "start" || argv.mode === "prod") {
       await next.debug(["start", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",

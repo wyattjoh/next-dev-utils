@@ -108,7 +108,7 @@ yargs(hideBin(process.argv))
     "debug a project with next",
     {
       mode: {
-        choices: ["dev", "build", "start", "standalone"] as const,
+        choices: ["dev", "prod", "build", "start", "standalone"] as const,
         demand: true,
       },
       "next-project-directory": {
