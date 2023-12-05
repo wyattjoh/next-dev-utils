@@ -1,12 +1,14 @@
 import { execa, type Options } from "execa";
 
+export type Command = (args: string[], options?: Options) => Promise<string>;
+
 export function createCommand(
   file: string,
   defaultArgs: string[] = [],
   defaultOptions: Options = {},
   verbose = false
-) {
-  return async function (args: string[], options: Options = {}) {
+): Command {
+  return async (args, options = {}) => {
     if (verbose) {
       console.log(`$ ${file} ${args.join(" ")}`);
     }
@@ -32,5 +34,7 @@ export function createCommand(
       }
       process.exit(exitCode);
     }
+
+    return stdout;
   };
 }
