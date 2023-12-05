@@ -1,5 +1,5 @@
 import path from "node:path";
-import { getConfig } from "./config.js";
+import { getConfig } from "./config/config.js";
 import { Command, createCommand } from "./execa.js";
 
 let next: Command;

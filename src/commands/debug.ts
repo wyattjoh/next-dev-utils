@@ -1,4 +1,4 @@
-import fs from "node:fs/promises";
+import { promises as fs, existsSync } from "node:fs";
 import path from "node:path";
 import ora from "ora";
 
@@ -21,16 +21,21 @@ async function removeDotNextDirectory(nextProjectPath: string) {
 
 type Options = {
   mode: "dev" | "build" | "start" | "prod" | "standalone" | "export";
-  "next-project-directory": string;
+  nextProjectDirectory: string;
   rm: boolean;
 };
 
-export async function debugCommand(argv: Options) {
+export async function debugCommand(options: Options) {
   // Remove the existing .next directory from the project directory if it
   // exists.
-  const nextProjectPath = argv["next-project-directory"];
+  const nextProjectPath = options.nextProjectDirectory;
+  if (!existsSync(nextProjectPath)) {
+    throw new Error(
+      `The next project directory ${nextProjectPath} does not exist.`
+    );
+  }
 
-  if (argv.mode !== "start" && argv.mode !== "export") {
+  if (options.mode !== "start" && options.mode !== "export") {
     await removeDotNextDirectory(nextProjectPath);
   }
 
@@ -43,9 +48,9 @@ export async function debugCommand(argv: Options) {
 
   try {
     if (
-      argv.mode === "build" ||
-      argv.mode === "prod" ||
-      argv.mode === "standalone"
+      options.mode === "build" ||
+      options.mode === "prod" ||
+      options.mode === "standalone"
     ) {
       await next.debug(["build", nextProjectPath], {
         stdout: "inherit",
@@ -54,7 +59,7 @@ export async function debugCommand(argv: Options) {
       });
     }
 
-    if (argv.mode === "start" || argv.mode === "prod") {
+    if (options.mode === "start" || options.mode === "prod") {
       await next.debug(["start", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
@@ -62,7 +67,7 @@ export async function debugCommand(argv: Options) {
       });
     }
 
-    if (argv.mode === "dev") {
+    if (options.mode === "dev") {
       await next.debug(["dev", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
@@ -70,7 +75,7 @@ export async function debugCommand(argv: Options) {
       });
     }
 
-    if (argv.mode === "standalone") {
+    if (options.mode === "standalone") {
       await node.debug(
         [
           // The standalone server is built in the .next/standalone directory.
@@ -84,7 +89,7 @@ export async function debugCommand(argv: Options) {
       );
     }
 
-    if (argv.mode === "export") {
+    if (options.mode === "export") {
       await next.debug(["export", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
@@ -97,7 +102,7 @@ export async function debugCommand(argv: Options) {
     }
   }
 
-  if (argv.rm) {
+  if (options.rm) {
     await removeDotNextDirectory(nextProjectPath);
   }
 }

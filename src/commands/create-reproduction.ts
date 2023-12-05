@@ -3,13 +3,13 @@ import path from "node:path";
 
 import stripIndent from "strip-indent";
 
-import { getConfig } from "../lib/config.js";
+import { getConfig } from "../lib/config/config.js";
 
 type Options = {
   name: string;
 };
 
-export async function createReproduction(args: Options) {
+export async function createReproductionCommand(args: Options) {
   // In the reproductions folder, create a folder with the name of the reproduction
   const reproduction = path.join(
     await getConfig("next_project_path"),

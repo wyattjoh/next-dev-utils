@@ -4,7 +4,7 @@ import { promises as fs } from "node:fs";
 import ora, { Ora } from "ora";
 
 import { client as fetchClient } from "./client.js";
-import { getConfig } from "./config.js";
+import { getConfig } from "./config/config.js";
 import { pack } from "./pack.js";
 
 type Options = {
