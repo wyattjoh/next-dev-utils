@@ -10,7 +10,7 @@ import * as minio from "minio";
 import inquirer from "inquirer";
 
 import { pnpm } from "./pnpm.js";
-import { getConfig } from "./config.js";
+import { getConfig } from "./config/config.js";
 
 type Options = {
   cwd?: string;

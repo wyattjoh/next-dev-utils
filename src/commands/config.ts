@@ -1,4 +1,4 @@
-import { config as Config, schema, prompt } from "../lib/config.js";
+import { config as Config, schema, prompt } from "../lib/config/config.js";
 
 type Options = {
   operation: "get" | "set";
@@ -6,7 +6,7 @@ type Options = {
   value?: string;
 };
 
-export async function config(args: Options) {
+export async function configCommand(args: Options) {
   if (args.operation === "get") {
     if (!args.key) {
       for (const key in schema) {

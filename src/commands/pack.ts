@@ -7,7 +7,7 @@ type Options = {
   serve: boolean;
 };
 
-export async function pack(options: Options) {
+export async function packCommand(options: Options) {
   if (options.json && options.serve) {
     throw new Error("Cannot use --json and --serve together");
   }

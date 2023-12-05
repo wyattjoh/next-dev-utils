@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { getConfig } from "../lib/config.js";
+import { getConfig } from "../lib/config/config.js";
 import * as pnpm from "../lib/pnpm.js";
 
 type Commands = "clean" | "install" | "build" | "dev" | "default";
