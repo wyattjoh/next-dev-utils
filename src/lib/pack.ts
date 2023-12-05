@@ -14,8 +14,8 @@ import { getConfig } from "./config.js";
 
 type Options = {
   cwd?: string;
-  serve?: boolean;
-  json?: boolean;
+  serve: boolean;
+  json: boolean;
 };
 
 export async function pack({ cwd = process.cwd(), ...options }: Options) {

@@ -1,12 +1,11 @@
 import clipboard from "clipboardy";
 
 import { packNext as packNextLib } from "../lib/pack-next.js";
-import { Arguments } from "yargs";
 
-type Options = Arguments<{
-  serve?: boolean;
-  json?: boolean;
-}>;
+type Options = {
+  json: boolean;
+  serve: boolean;
+};
 
 export async function packNext(options: Options) {
   if (options.json && options.serve) {

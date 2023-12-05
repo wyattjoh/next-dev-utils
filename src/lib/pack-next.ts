@@ -8,11 +8,13 @@ import { getConfig } from "./config.js";
 import { pack } from "./pack.js";
 
 type Options = {
-  serve?: boolean;
-  json?: boolean;
+  serve: boolean;
+  json: boolean;
 };
 
-export async function packNext(options: Options = {}) {
+export async function packNext(
+  options: Options = { serve: false, json: false }
+) {
   const nextProjectPath = await getConfig("next_project_path");
   const next = path.join(nextProjectPath, "packages", "next");
 
