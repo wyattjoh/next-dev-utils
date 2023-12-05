@@ -1,19 +1,20 @@
+import type { Arguments } from "yargs";
+
 import clipboard from "clipboardy";
 
-import { packNext as packNextLib } from "../lib/pack-next.js";
-import { Arguments } from "yargs";
+import { pack as packLib } from "../lib/pack.js";
 
 type Options = Arguments<{
-  serve?: boolean;
   json?: boolean;
+  serve?: boolean;
 }>;
 
-export async function packNext(options: Options) {
+export async function pack(options: Options) {
   if (options.json && options.serve) {
     throw new Error("Cannot use --json and --serve together");
   }
 
-  const url = await packNextLib(options);
+  const url = await packLib(options);
   await clipboard.write(url);
   if (!options.json) console.log("\nCopied URL to clipboard 🦄");
   if (options.json) console.log(url);

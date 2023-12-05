@@ -1,139 +1,77 @@
 import path from "node:path";
-import crypto from "node:crypto";
-import stream from "node:stream/promises";
-import fs from "node:fs/promises";
-import os from "node:os";
+import { promises as fs } from "node:fs";
 
-import ora from "ora";
-import minio from "minio";
-import inquirer from "inquirer";
+import ora, { Ora } from "ora";
 
-import { pnpm } from "./pnpm.js";
+import { client as fetchClient } from "./client.js";
 import { getConfig } from "./config.js";
+import { pack } from "./pack.js";
 
-export async function packNext() {
-  let nextProjectPath = await getConfig("next_project_path");
-  let ENDPOINT = await getConfig("endpoint");
-  let BUCKET = await getConfig("bucket");
-  let ACCESS_KEY = await getConfig("access_key");
-  let SECRET_KEY = await getConfig("secret_key");
+type Options = {
+  serve?: boolean;
+  json?: boolean;
+};
 
-  // Create the temporary folder.
-  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "next-dev-utils-"));
+export async function packNext(options: Options = {}) {
+  const nextProjectPath = await getConfig("next_project_path");
+  const next = path.join(nextProjectPath, "packages", "next");
 
-  let spinner = ora("Packing next...").start();
-  let absolutePackedFile;
-  let packedFile;
+  // Get the current package.json.
+  const pkgFilename = path.join(next, "package.json");
+  const local = await fs.readFile(pkgFilename, "utf8");
+  const pkg = JSON.parse(local);
+  const { version } = pkg;
+
+  let spinner: Ora | undefined;
+  if (!options.json)
+    spinner = ora("Getting optional dependencies from unpkg...").start();
   try {
-    await pnpm(["pack", "--pack-destination", dir], {
-      cwd: path.join(nextProjectPath, "packages", "next"),
-    });
-
-    // Find the name of the packed file.
-    const files = await fs.readdir(dir);
-    packedFile = files.find(
-      (file) => file.startsWith("next-") && file.endsWith(".tgz")
+    // Get the optional dependencies from the canary version.
+    const json = await fetchClient.fetch(
+      `https://unpkg.com/next@${version}/package.json`
     );
-    if (!packedFile) {
-      throw new Error("Could not find packed file");
+    const remote = JSON.parse(json);
+    if (
+      typeof remote !== "object" ||
+      remote === null ||
+      Array.isArray(remote)
+    ) {
+      throw new Error("Expected package.json to be an object");
     }
+    if (
+      !("optionalDependencies" in remote) ||
+      typeof remote.optionalDependencies !== "object" ||
+      remote.optionalDependencies === null
+    ) {
+      throw new Error("Expected package.json to have optionalDependencies");
+    }
+    const optionalDependencies = remote.optionalDependencies;
+    pkg.optionalDependencies = {
+      ...pkg.optionalDependencies,
+      ...optionalDependencies,
+    };
+    await fs.writeFile(pkgFilename, JSON.stringify(pkg, null, 2), "utf8");
 
-    // Make the packed file absolute.
-    absolutePackedFile = path.join(dir, packedFile);
+    if (spinner) spinner.succeed("Got optional dependencies from unpkg");
   } catch (err) {
     console.error(err);
-    spinner.fail("Packing next failed");
+    if (spinner) spinner.fail("Getting optional deps from unpkg failed");
     process.exit(1);
   }
-  spinner.succeed(`Packed next: ${absolutePackedFile}`);
 
-  // Calculate an md5 hash of the packed file.
-  spinner = ora("Calculating md5 hash of packed file...").start();
+  // Pack the package.
+  const url = await pack({ ...options, cwd: next });
 
-  let md5;
+  if (spinner) spinner = ora("Restoring package.json...").start();
   try {
-    const hash = crypto.createHash("md5");
-    const file = await fs.open(absolutePackedFile, "r");
+    await fs.writeFile(pkgFilename, local, "utf8");
 
-    await stream.pipeline(file.createReadStream(), hash);
-
-    md5 = hash.digest("hex");
+    if (spinner) spinner.succeed("Restored package.json");
   } catch (err) {
     console.error(err);
-    spinner.fail("Calculating md5 hash of packed file failed");
+    if (spinner) spinner.fail("Restoring package.json failed");
     process.exit(1);
   }
-  spinner.succeed(`Calculated md5 hash of packed file: ${md5}`);
-
-  // Upload the packed file to cloud storage.
-  const client = new minio.Client({
-    endPoint: ENDPOINT,
-    accessKey: ACCESS_KEY,
-    secretKey: SECRET_KEY,
-  });
-
-  // Test to see if the bucket exists.
-  const bucketExists = await client.bucketExists(BUCKET);
-  if (!bucketExists) {
-    throw new Error(`Bucket "${BUCKET}" does not exist`);
-  }
-
-  // Check if the object already exists in the bucket by comparing the file to
-  // the md5 hash.
-  spinner = ora("Checking if file already exists in bucket...").start();
-  let exists;
-  try {
-    const metadata = await client.statObject(BUCKET, packedFile);
-    exists = metadata.etag === md5;
-    if (exists) {
-      spinner.succeed("File already exists in cloud storage");
-    } else {
-      spinner.info("File exists in cloud storage but has differing content");
-    }
-  } catch {
-    exists = false;
-    spinner.info("File doesn't exist in cloud storage");
-  }
-
-  if (!exists) {
-    while (true) {
-      // Upload the file.
-      spinner = ora("Uploading file to bucket...").start();
-      try {
-        await client.fPutObject(BUCKET, packedFile, absolutePackedFile, {
-          md5,
-        });
-
-        spinner.succeed("Uploaded file to bucket");
-        break;
-      } catch (err) {
-        spinner.fail("Uploading file to bucket failed");
-
-        console.error(err);
-
-        const answer = await inquirer.prompt({
-          type: "confirm",
-          name: "retry",
-          message: "Retry?",
-          default: true,
-        });
-
-        if (!answer.retry) {
-          process.exit(1);
-        }
-      }
-    }
-  }
-
-  // Get the URL to the uploaded file.
-  let url = await client.presignedGetObject(
-    BUCKET,
-    packedFile,
-    // 1 day
-    60 * 60 * 24 * 1
-  );
-
-  console.log(`\nURL: ${url}`);
 
   // Return the URL to the uploaded file.
   return url;

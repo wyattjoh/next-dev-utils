@@ -8,6 +8,7 @@ import { config } from "./commands/config.js";
 
 import { createReproduction } from "./commands/create-reproduction.js";
 import { debugCommand } from "./commands/debug.js";
+import { pack } from "./commands/pack.js";
 import { packNext } from "./commands/pack-next.js";
 import { testDeploy } from "./commands/test-deploy.js";
 import { getConfig, schema } from "./lib/config.js";
@@ -71,8 +72,32 @@ yargs(hideBin(process.argv))
   .command(
     "pack-next",
     "packs up and uploads the Next.js package to cloud storage",
-    {},
+    {
+      json: {
+        type: "boolean",
+        default: false,
+      },
+      serve: {
+        type: "boolean",
+        default: false,
+      },
+    },
     packNext
+  )
+  .command(
+    "pack",
+    "packs up and uploads the current package to cloud storage",
+    {
+      json: {
+        type: "boolean",
+        default: false,
+      },
+      serve: {
+        type: "boolean",
+        default: false,
+      },
+    },
+    pack
   )
   .command(
     "config <operation> [key] [value]",
