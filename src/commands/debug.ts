@@ -20,7 +20,7 @@ async function removeDotNextDirectory(nextProjectPath: string) {
 }
 
 type Options = {
-  mode: "dev" | "build" | "start" | "prod" | "standalone";
+  mode: "dev" | "build" | "start" | "prod" | "standalone" | "export";
   "next-project-directory": string;
   rm?: boolean;
 };
@@ -30,7 +30,7 @@ export async function debugCommand(argv: Options) {
   // exists.
   const nextProjectPath = argv["next-project-directory"];
 
-  if (argv.mode !== "start") {
+  if (argv.mode !== "start" && argv.mode !== "export") {
     await removeDotNextDirectory(nextProjectPath);
   }
 
@@ -82,6 +82,14 @@ export async function debugCommand(argv: Options) {
           signal,
         }
       );
+    }
+
+    if (argv.mode === "export") {
+      await next.debug(["export", nextProjectPath], {
+        stdout: "inherit",
+        stderr: "inherit",
+        signal,
+      });
     }
   } catch (err) {
     if (!(err as any).isCanceled) {

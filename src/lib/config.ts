@@ -1,5 +1,3 @@
-import fs from "node:fs/promises";
-
 import inquirer from "inquirer";
 
 import Conf from "conf";
