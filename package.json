@@ -1,11 +1,12 @@
 {
   "name": "next-dev-utils",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "bin": "./bin/next-dev-utils.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "pnpm run build"
   },
   "type": "module",
   "keywords": [],
@@ -24,9 +25,9 @@
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
-    "@types/node": "^20.9.0",
-    "@types/yargs": "^17.0.31",
-    "prettier": "^3.0.3",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.10.3",
+    "@types/yargs": "^17.0.32",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
   }
 }
