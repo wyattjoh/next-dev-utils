@@ -13,6 +13,7 @@ import { packNext } from "./commands/pack-next.js";
 import { testDeploy } from "./commands/test-deploy.js";
 import { getConfig, schema } from "./lib/config.js";
 import { exists } from "./lib/validators/exists.js";
+import { buildCommand } from "./commands/make.js";
 
 yargs(hideBin(process.argv))
   .command(
@@ -129,6 +130,22 @@ yargs(hideBin(process.argv))
     createReproduction
   )
   .command(
+    "make [command]",
+    "starts development with Next.js",
+    {
+      command: {
+        choices: ["clean", "install", "build", "dev", "default"] as const,
+        default: "default" as const,
+      },
+      clean: {
+        type: "boolean",
+        default: false,
+        description: "run `pnpm clean` before building",
+      },
+    },
+    buildCommand
+  )
+  .command(
     "debug <mode> <next-project-directory>",
     "debug a project with next",
     {
@@ -149,6 +166,7 @@ yargs(hideBin(process.argv))
       },
       rm: {
         type: "boolean",
+        default: false,
       },
     },
     async (argv) => {
@@ -157,6 +175,6 @@ yargs(hideBin(process.argv))
       return await debugCommand(argv);
     }
   )
-  .parserConfiguration({ "camel-case-expansion": false })
+  // .parserConfiguration({ "camel-case-expansion": false })
   .demandCommand(1)
   .parse();

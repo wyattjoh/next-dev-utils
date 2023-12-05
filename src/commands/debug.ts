@@ -22,7 +22,7 @@ async function removeDotNextDirectory(nextProjectPath: string) {
 type Options = {
   mode: "dev" | "build" | "start" | "prod" | "standalone" | "export";
   "next-project-directory": string;
-  rm?: boolean;
+  rm: boolean;
 };
 
 export async function debugCommand(argv: Options) {

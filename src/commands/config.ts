@@ -1,11 +1,10 @@
-import type { Arguments } from "yargs";
 import { config as Config, schema, prompt } from "../lib/config.js";
 
-type Options = Arguments<{
+type Options = {
   operation: "get" | "set";
   key?: keyof typeof schema;
   value?: string;
-}>;
+};
 
 export async function config(args: Options) {
   if (args.operation === "get") {

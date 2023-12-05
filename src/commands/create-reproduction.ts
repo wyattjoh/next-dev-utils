@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import stripIndent from "strip-indent";
+
 import { getConfig } from "../lib/config.js";
 
 type Options = {
@@ -24,9 +25,7 @@ export async function createReproduction(args: Options) {
     path.join(reproduction, "next.config.js"),
     stripIndent(`
     module.exports = {
-        experimental: {
-            appDir: true,
-        },
+        experimental: {},
     };`)
   );
 
