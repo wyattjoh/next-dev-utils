@@ -2,8 +2,8 @@ import { promises as fs, existsSync } from "node:fs";
 import path from "node:path";
 import ora from "ora";
 
-import * as next from "../lib/next.js";
-import * as node from "../lib/node.js";
+import * as next from "../lib/commands/next.js";
+import * as node from "../lib/commands/node.js";
 
 async function removeDotNextDirectory(nextProjectPath: string) {
   let spinner = ora("Removing existing .next directory").start();
@@ -46,13 +46,16 @@ export async function debugCommand(options: Options) {
     controller.abort();
   });
 
+  // TODO: add any node options for all next commands
+  const nodeOptions: string[] = [];
+
   try {
     if (
       options.mode === "build" ||
       options.mode === "prod" ||
       options.mode === "standalone"
     ) {
-      await next.debug(["build", nextProjectPath], {
+      await next.verbose(["build", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
         signal,
@@ -60,37 +63,41 @@ export async function debugCommand(options: Options) {
     }
 
     if (options.mode === "start" || options.mode === "prod") {
-      await next.debug(["start", nextProjectPath], {
+      await next.verbose(["start", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
         signal,
+        nodeOptions,
       });
     }
 
     if (options.mode === "dev") {
-      await next.debug(["dev", nextProjectPath], {
+      await next.verbose(["dev", nextProjectPath], {
+        stdout: "inherit",
+        stderr: "inherit",
+        signal,
+        nodeOptions,
+      });
+    }
+
+    if (options.mode === "standalone") {
+      // The standalone server is built in the .next/standalone directory.
+      const standalone = path.join(
+        nextProjectPath,
+        ".next",
+        "standalone",
+        "server.js"
+      );
+
+      await node.verbose([standalone], {
         stdout: "inherit",
         stderr: "inherit",
         signal,
       });
     }
 
-    if (options.mode === "standalone") {
-      await node.debug(
-        [
-          // The standalone server is built in the .next/standalone directory.
-          path.join(nextProjectPath, ".next", "standalone", "server.js"),
-        ],
-        {
-          stdout: "inherit",
-          stderr: "inherit",
-          signal,
-        }
-      );
-    }
-
     if (options.mode === "export") {
-      await next.debug(["export", nextProjectPath], {
+      await next.verbose(["export", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
         signal,

@@ -1,6 +1,10 @@
-import { createCommand } from "./execa.js";
+import { createCommand } from "./commands/create-command.js";
 
-export const pnpm = createCommand("pnpm");
+type PNPMOptions = {};
+
+export const pnpm = createCommand<PNPMOptions>("pnpm");
 
 // Add a verbose function to the pnpm module.
-export const verbose = createCommand("pnpm", [], {}, true);
+export const verbose = createCommand<PNPMOptions>("pnpm", [], {
+  verbose: true,
+});
