@@ -1,6 +1,9 @@
+import { Command } from "./commands/command.js";
 import { createCommand } from "./commands/create-command.js";
 
 type PNPMOptions = {};
+
+export type PNPMCommand<E = {}> = Command<PNPMOptions & E>;
 
 export const pnpm = createCommand<PNPMOptions>("pnpm");
 

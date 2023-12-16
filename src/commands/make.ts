@@ -3,11 +3,12 @@ import path from "node:path";
 import { getConfig } from "../lib/config/config.js";
 import * as pnpm from "../lib/pnpm.js";
 
-type Commands = "clean" | "install" | "build" | "dev" | "default";
+type Commands = "clean" | "install" | "types" | "build" | "dev" | "default";
 
 type Options = {
   command: Commands;
   clean: boolean;
+  filter?: string[];
 };
 
 const dependencies: Record<Commands, Array<Commands>> = {
@@ -15,51 +16,64 @@ const dependencies: Record<Commands, Array<Commands>> = {
   install: [],
   build: [],
   dev: [],
+  types: [],
   default: ["clean", "install", "build", "dev"],
 };
 
-type Command = (options: Options) => Promise<void>;
+type Service = pnpm.PNPMCommand<{
+  filter?: string[];
+}>;
 
-const commands: Record<Commands, Command | null> = {
-  clean: async (options) => {
-    // Only run clean if the clean option is set or the command is clean.
-    if (!options.clean && options.command !== "clean") return;
-
+const service = {
+  project: async (args, options) => {
     const nextProjectPath = await getConfig("next_project_path");
 
-    await pnpm.verbose(["clean"], {
+    if (options?.filter) {
+      args.unshift("--filter", ...options.filter);
+    }
+
+    return pnpm.verbose(args, {
+      ...options,
       stdout: "inherit",
       stderr: "inherit",
       cwd: nextProjectPath,
     });
   },
-  install: async () => {
-    const nextProjectPath = await getConfig("next_project_path");
-
-    await pnpm.verbose(["install"], {
-      stdout: "inherit",
-      stderr: "inherit",
-      cwd: nextProjectPath,
-    });
-  },
-  build: async () => {
-    const nextProjectPath = await getConfig("next_project_path");
-
-    await pnpm.verbose(["build"], {
-      stdout: "inherit",
-      stderr: "inherit",
-      cwd: nextProjectPath,
-    });
-  },
-  dev: async () => {
+  next: async (args, options) => {
     const nextProjectPath = await getConfig("next_project_path");
     const nextPackagePath = path.join(nextProjectPath, "packages/next");
 
-    await pnpm.verbose(["dev"], {
+    if (options?.filter) {
+      args.unshift("--filter", ...options.filter);
+    }
+
+    return pnpm.verbose(args, {
+      ...options,
       stdout: "inherit",
       stderr: "inherit",
       cwd: nextPackagePath,
     });
+  },
+} satisfies Record<string, Service>;
+
+type Command = (options: Options) => Promise<void>;
+
+const commands: Record<Commands, Command | null> = {
+  types: async () => {},
+  clean: async (options) => {
+    // Only run clean if the clean option is set or the command is clean.
+    if (!options.clean && options.command !== "clean") return;
+
+    await service.project(["clean"], options);
+  },
+  install: async (options) => {
+    await service.project(["install"], options);
+  },
+  build: async (options) => {
+    await service.project(["build"], options);
+  },
+  dev: async (options) => {
+    await service.next(["dev"], options);
   },
   default: null,
 };
@@ -81,6 +95,6 @@ async function run(command: Commands, options: Options) {
   await handler(options);
 }
 
-export async function buildCommand(options: Options) {
+export async function makeCommand(options: Options) {
   await run(options.command, options);
 }

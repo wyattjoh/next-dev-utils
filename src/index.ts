@@ -7,9 +7,10 @@ import { debugCommand } from "./commands/debug.js";
 import { packCommand } from "./commands/pack.js";
 import { packNextCommand } from "./commands/pack-next.js";
 import { testDeployCommand } from "./commands/test-deploy.js";
-import { buildCommand } from "./commands/make.js";
+import { makeCommand } from "./commands/make.js";
 
 import { schema } from "./lib/config/config.js";
+import { nextCommand } from "./commands/next.js";
 
 yargs(hideBin(process.argv))
   .command(
@@ -106,8 +107,29 @@ yargs(hideBin(process.argv))
         default: false,
         description: "run `pnpm clean` before building",
       },
+      filter: {
+        type: "string",
+        array: true,
+        description: "filter the packages to run the command on",
+      },
     },
-    buildCommand
+    makeCommand
+  )
+  .command(
+    "next <command> [next-project-directory]",
+    "run commands using the development Next.js binary",
+    {
+      command: {
+        type: "string",
+        demand: true,
+      },
+      "next-project-directory": {
+        type: "string",
+        normalize: true,
+        default: process.cwd(),
+      },
+    },
+    nextCommand
   )
   .command(
     "debug <mode> <next-project-directory>",
@@ -127,6 +149,7 @@ yargs(hideBin(process.argv))
       },
       "next-project-directory": {
         type: "string",
+        normalize: true,
         demand: true,
       },
       rm: {
@@ -137,4 +160,5 @@ yargs(hideBin(process.argv))
     debugCommand
   )
   .demandCommand(1)
+  .strict()
   .parse();
