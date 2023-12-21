@@ -12,6 +12,37 @@ type Options = {
   json: boolean;
 };
 
+async function getPackageJSON(version: string) {
+  let json;
+  try {
+    // Get the optional dependencies from the canary version.
+    json = await fetchClient.fetch(
+      `https://unpkg.com/next@${version}/package.json`
+    );
+  } catch {
+    // The fetch failed, fallback to the latest version.
+    const res = await fetch("https://unpkg.com/next@canary/package.json", {
+      redirect: "follow",
+    });
+    if (!res.ok) throw new Error("Failed to fetch package.json");
+    json = await res.text();
+  }
+
+  const remote = JSON.parse(json);
+  if (typeof remote !== "object" || remote === null || Array.isArray(remote)) {
+    throw new Error("Expected package.json to be an object");
+  }
+  if (
+    !("optionalDependencies" in remote) ||
+    typeof remote.optionalDependencies !== "object" ||
+    remote.optionalDependencies === null
+  ) {
+    throw new Error("Expected package.json to have optionalDependencies");
+  }
+
+  return remote;
+}
+
 export async function packNext(
   options: Options = { serve: false, json: false }
 ) {
@@ -28,31 +59,25 @@ export async function packNext(
   if (!options.json)
     spinner = ora("Getting optional dependencies from unpkg...").start();
   try {
-    // Get the optional dependencies from the canary version.
-    const json = await fetchClient.fetch(
-      `https://unpkg.com/next@${version}/package.json`
-    );
-    const remote = JSON.parse(json);
-    if (
-      typeof remote !== "object" ||
-      remote === null ||
-      Array.isArray(remote)
-    ) {
-      throw new Error("Expected package.json to be an object");
+    const remote = await getPackageJSON(version);
+
+    // If the remote version is different than the local version, we need to use
+    // the remote version's package.json.
+    if (remote.version !== version) {
+      console.log(
+        "Using remote package.json, local version doesn't exist. Local edits to package.json will be ignored."
+      );
+
+      await fs.writeFile(pkgFilename, JSON.stringify(remote, null, 2), "utf8");
+    } else {
+      const optionalDependencies = remote.optionalDependencies;
+      pkg.optionalDependencies = {
+        ...pkg.optionalDependencies,
+        ...optionalDependencies,
+      };
+
+      await fs.writeFile(pkgFilename, JSON.stringify(pkg, null, 2), "utf8");
     }
-    if (
-      !("optionalDependencies" in remote) ||
-      typeof remote.optionalDependencies !== "object" ||
-      remote.optionalDependencies === null
-    ) {
-      throw new Error("Expected package.json to have optionalDependencies");
-    }
-    const optionalDependencies = remote.optionalDependencies;
-    pkg.optionalDependencies = {
-      ...pkg.optionalDependencies,
-      ...optionalDependencies,
-    };
-    await fs.writeFile(pkgFilename, JSON.stringify(pkg, null, 2), "utf8");
 
     if (spinner) spinner.succeed("Got optional dependencies from unpkg");
   } catch (err) {
