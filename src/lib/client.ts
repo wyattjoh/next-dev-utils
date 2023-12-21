@@ -7,9 +7,25 @@ type FetchClientCacheEntry = {
   expires: number;
 };
 
-class FetchClient {
-  private dir: string;
-  private cache: Map<string, FetchClientCacheEntry>;
+interface FetchClient {
+  fetch(url: string): Promise<string>;
+}
+
+class BaseFetchClient implements FetchClient {
+  async fetch(url: string): Promise<string> {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}`);
+    }
+
+    return await res.text();
+  }
+}
+
+class CachedFetchClient implements FetchClient {
+  private readonly client = new BaseFetchClient();
+  private readonly dir: string;
+  private readonly cache: Map<string, FetchClientCacheEntry>;
 
   constructor() {
     this.dir = find({ name: "next-dev-utils" })!;
@@ -33,8 +49,7 @@ class FetchClient {
       }
     }
 
-    const res = await fetch(url);
-    const contents = await res.text();
+    const contents = await this.client.fetch(url);
 
     const expires = Date.now() + 1000 * 60 * 60;
 
@@ -46,4 +61,6 @@ class FetchClient {
   }
 }
 
-export const client = new FetchClient();
+export const client = process.env.SKIP_CACHE
+  ? new BaseFetchClient()
+  : new CachedFetchClient();
