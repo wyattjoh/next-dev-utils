@@ -9,7 +9,7 @@ type NextOptions = {
 };
 
 let next: Command<NextOptions> = async (
-  args,
+  args = [],
   { nodeOptions = [], env, ...options } = {}
 ) => {
   const nextProjectPath = await getConfig("next_project_path");
@@ -20,11 +20,7 @@ let next: Command<NextOptions> = async (
 
   return node([nextExecPath, ...args], {
     ...options,
-    env: {
-      ...env,
-      NEXT_TELEMETRY_DISABLED: "1",
-      __NEXT_PRETTY_MANIFEST: "1",
-    },
+    env,
     nodeOptions: [
       "--trace-deprecation",
       "--enable-source-maps",

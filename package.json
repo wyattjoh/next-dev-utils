@@ -1,11 +1,34 @@
 {
   "name": "next-dev-utils",
   "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
   "description": "",
-  "main": "index.js",
   "bin": "./bin/next-dev-utils.js",
+  "main": "./dist/extension.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/lib.js"
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "next-dev-utils.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
   "scripts": {
-    "build": "tsc",
+    "vscode:prepublish": "pnpm run compile",
+    "dev": "pnpm run build --watch",
+    "build": "node scripts/build.js all",
+    "types": "tsc",
     "prepare": "pnpm run build"
   },
   "type": "module",
@@ -15,6 +38,7 @@
   "dependencies": {
     "clipboardy": "^4.0.0",
     "conf": "^12.0.0",
+    "dotenv": "^16.3.1",
     "execa": "^8.0.1",
     "find-cache-dir": "^5.0.0",
     "inquirer": "^9.2.12",
@@ -26,7 +50,9 @@
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
     "@types/node": "^20.10.3",
+    "@types/vscode": "^1.85.0",
     "@types/yargs": "^17.0.32",
+    "esbuild": "^0.19.10",
     "prettier": "^3.1.0",
     "typescript": "^5.3.2"
   }

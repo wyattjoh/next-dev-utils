@@ -9,7 +9,7 @@ import ora, { Ora } from "ora";
 import * as minio from "minio";
 import inquirer from "inquirer";
 
-import { pnpm } from "./pnpm.js";
+import { pnpm } from "./commands/pnpm.js";
 import { getConfig } from "./config/config.js";
 
 type Options = {

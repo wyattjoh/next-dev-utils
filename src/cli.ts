@@ -1,5 +1,9 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import dotenv from "dotenv";
+
+// Load environment variables from .env file if it exists.
+dotenv.config();
 
 import { configCommand } from "./commands/config.js";
 import { createReproductionCommand } from "./commands/create-reproduction.js";
@@ -95,12 +99,21 @@ yargs(hideBin(process.argv))
     createReproductionCommand
   )
   .command(
-    "make [command]",
+    "make [command...]",
     "starts development with Next.js",
     {
       command: {
-        choices: ["clean", "install", "build", "dev", "default"] as const,
-        default: "default" as const,
+        choices: [
+          "clean",
+          "install",
+          "build",
+          "dev",
+          "native",
+          "default",
+          "all",
+        ] as const,
+        default: ["default"] as const,
+        type: "array",
       },
       clean: {
         type: "boolean",
@@ -155,6 +168,12 @@ yargs(hideBin(process.argv))
       rm: {
         type: "boolean",
         default: false,
+      },
+      run: {
+        type: "string",
+        describe:
+          "run a script/program while the server is running, signals will be sent to the child process",
+        normalize: true,
       },
     },
     debugCommand

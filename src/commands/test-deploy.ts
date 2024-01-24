@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 
 import { getConfig } from "../lib/config/config.js";
 import { packNext } from "../lib/pack-next.js";
-import { pnpm } from "../lib/pnpm.js";
+import { pnpm } from "../lib/commands/pnpm.js";
 
 type Options = {
   "test-file": string;
