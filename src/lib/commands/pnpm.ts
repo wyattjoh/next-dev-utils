@@ -1,5 +1,5 @@
-import { Command } from "./commands/command.js";
-import { createCommand } from "./commands/create-command.js";
+import { Command } from "./command.js";
+import { createCommand } from "./create-command.js";
 
 type PNPMOptions = {};
 

@@ -1,6 +1,7 @@
 import { promises as fs, existsSync } from "node:fs";
 import path from "node:path";
 import ora from "ora";
+import { execa } from "execa";
 
 import * as next from "../lib/commands/next.js";
 import * as node from "../lib/commands/node.js";
@@ -23,6 +24,7 @@ type Options = {
   mode: "dev" | "build" | "start" | "prod" | "standalone" | "export";
   nextProjectDirectory: string;
   rm: boolean;
+  run?: string;
 };
 
 export async function debugCommand(options: Options) {
@@ -35,6 +37,17 @@ export async function debugCommand(options: Options) {
     );
   }
 
+  if (
+    options.run &&
+    options.mode !== "start" &&
+    options.mode !== "prod" &&
+    options.mode !== "standalone"
+  ) {
+    throw new Error(
+      "The --run option is only valid with the start, prod, or standalone command"
+    );
+  }
+
   if (options.mode !== "start" && options.mode !== "export") {
     await removeDotNextDirectory(nextProjectPath);
   }
@@ -44,6 +57,12 @@ export async function debugCommand(options: Options) {
 
   process.on("SIGINT", async () => {
     controller.abort();
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", async () => {
+    controller.abort();
+    process.exit(0);
   });
 
   // TODO: add any node options for all next commands
@@ -62,41 +81,81 @@ export async function debugCommand(options: Options) {
       });
     }
 
-    if (options.mode === "start" || options.mode === "prod") {
-      await next.verbose(["start", nextProjectPath], {
-        stdout: "inherit",
-        stderr: "inherit",
-        signal,
-        nodeOptions,
-      });
-    }
+    if (
+      options.mode === "start" ||
+      options.mode === "prod" ||
+      options.mode === "standalone" ||
+      options.mode === "dev"
+    ) {
+      // Start the server and set the promise. If this has a `--run` option,
+      // we'll start after the server is started.
+      let start: Promise<unknown>;
+      switch (options.mode) {
+        case "start":
+        case "prod":
+          start = next.verbose(["start", nextProjectPath], {
+            stdout: "inherit",
+            stderr: "inherit",
+            signal,
+            nodeOptions,
+          });
+          break;
+        case "dev":
+          start = next.verbose(["dev", nextProjectPath], {
+            stdout: "inherit",
+            stderr: "inherit",
+            signal,
+            nodeOptions,
+          });
+          break;
+        case "standalone":
+          // The standalone server is built in the .next/standalone directory.
+          start = node.verbose(
+            [path.join(nextProjectPath, ".next", "standalone", "server.js")],
+            {
+              stdout: "inherit",
+              stderr: "inherit",
+              signal,
+            }
+          );
+          break;
+      }
 
-    if (options.mode === "dev") {
-      await next.verbose(["dev", nextProjectPath], {
-        stdout: "inherit",
-        stderr: "inherit",
-        signal,
-        nodeOptions,
-      });
-    }
+      // If there's a run command, we'll start it after the server is started.
+      let run: Promise<unknown> | undefined;
+      if (options.run) {
+        // Wait for 1 second to give the server a chance to start.
+        // TODO: make this deterministic
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (options.mode === "standalone") {
-      // The standalone server is built in the .next/standalone directory.
-      const standalone = path.join(
-        nextProjectPath,
-        ".next",
-        "standalone",
-        "server.js"
-      );
+        // Start the run command.
+        run = execa(options.run, {
+          shell: true,
+          verbose: true,
+          stdio: "inherit",
+          signal,
+        });
 
-      await node.verbose([standalone], {
-        stdout: "inherit",
-        stderr: "inherit",
-        signal,
-      });
-    }
+        // If the run command exits (or finishes), then abort the server.
+        run.finally(() => {
+          if (controller.signal.aborted) return;
 
-    if (options.mode === "export") {
+          console.log("[next-dev-utils] --run finished, stopping server");
+          controller.abort();
+        });
+
+        // If the server exits (or finishes), then abort the run command.
+        start.finally(() => {
+          if (controller.signal.aborted) return;
+
+          console.log("[next-dev-utils] server finished, stopping --run");
+          controller.abort();
+        });
+      }
+
+      // Wait for both the server and the run command to finish.
+      await Promise.all([start, run]);
+    } else if (options.mode === "export") {
       await next.verbose(["export", nextProjectPath], {
         stdout: "inherit",
         stderr: "inherit",
