@@ -1,2 +1,4 @@
 dist
 out
+.turbo
+packages/cli/src/tasks/*.ts

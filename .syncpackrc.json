@@ -1,0 +1,8 @@
+{
+  "versionGroups": [
+    {
+      "packages": ["**"],
+      "dependencyTypes": ["dependencies", "devDependencies"]
+    }
+  ]
+}

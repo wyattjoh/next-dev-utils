@@ -1,0 +1,30 @@
+{
+  "name": "@next-dev-utils/cli",
+  "version": "0.0.1",
+  "bin": {
+    "next-dev-utils": "./bin/next-dev-utils.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "type": "module",
+  "license": "ISC",
+  "dependencies": {
+    "clipboardy": "^4.0.0",
+    "dotenv": "^16.4.4",
+    "execa": "^8.0.1",
+    "ora": "^8.0.1",
+    "strip-indent": "^4.0.0",
+    "inquirer": "^9.2.14",
+    "yargs": "^17.7.2",
+    "@next-dev-utils/utils": "0.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/inquirer": "^9.0.7",
+    "@types/yargs": "^17.0.32",
+    "typescript": "^5.3.3",
+    "tsup": "^8.0.2"
+  }
+}
