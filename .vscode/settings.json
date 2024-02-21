@@ -1,0 +1,12 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": [".syncpackrc.json"],
+      "url": "https://unpkg.com/syncpack@11.2.1/dist/schema.json"
+    },
+    {
+      "fileMatch": ["turbo.json"],
+      "url": "https://turbo.build/schema.json"
+    }
+  ]
+}
