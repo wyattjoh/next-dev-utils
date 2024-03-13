@@ -43,10 +43,17 @@ class CachedFetchClient implements FetchClient {
       const file = await fs.readFile(filename, "utf8");
       const { contents, expires } = JSON.parse(file);
 
-      if (Date.now() < expires) {
+      if (
+        // If forced, ignore the expiration date on the cache entry. This won't
+        // extend the expiry date, but it will allow use of stale cache entries.
+        process.env.NEXT_DEV_UTILS_FORCE_CACHE === "true" ||
+        Date.now() < expires
+      ) {
         this.cache.set(url, { contents, expires });
         return contents;
       }
+    } else if (process.env.NEXT_DEV_UTILS_FORCE_CACHE === "true") {
+      throw new Error("Force cache enabled but cache entry wasn't found");
     }
 
     const contents = await this.client.fetch(url);
@@ -61,6 +68,10 @@ class CachedFetchClient implements FetchClient {
   }
 }
 
-export const client = process.env.SKIP_CACHE
-  ? new BaseFetchClient()
-  : new CachedFetchClient();
+export const client =
+  // If skip has been enabled and it isn't being forced, then use the base fetch
+  // client. This will bypass the cache and fetch the latest data.
+  process.env.NEXT_DEV_UTILS_SKIP_CACHE &&
+  process.env.NEXT_DEV_UTILS_FORCE_CACHE !== "true"
+    ? new BaseFetchClient()
+    : new CachedFetchClient();
