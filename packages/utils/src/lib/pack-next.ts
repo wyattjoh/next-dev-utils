@@ -5,14 +5,7 @@ import ora, { Ora } from "ora";
 
 import { client as fetchClient } from "./client.js";
 import { getConfig } from "./config/config.js";
-import { pack } from "./pack.js";
-
-type Options = {
-  serve?: boolean;
-  json?: boolean;
-  progress?: boolean;
-  verbose?: boolean;
-};
+import { type PackOptions, pack } from "./pack.js";
 
 async function getPackageJSON(version: string) {
   let json;
@@ -45,7 +38,7 @@ async function getPackageJSON(version: string) {
   return remote;
 }
 
-export async function packNext(options: Options = {}) {
+export async function packNext(options: PackOptions = {}) {
   const nextProjectPath = await getConfig("next_project_path");
   const next = path.join(nextProjectPath, "packages", "next");
 

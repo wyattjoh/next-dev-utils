@@ -12,15 +12,16 @@ import inquirer from "inquirer";
 import { pnpm } from "./commands/pnpm.js";
 import { getConfig } from "./config/config.js";
 
-type Options = {
+export type PackOptions = {
   cwd?: string;
   serve?: boolean;
   json?: boolean;
   progress?: boolean;
   verbose?: boolean;
+  signal?: AbortSignal;
 };
 
-export async function pack({ cwd = process.cwd(), ...options }: Options) {
+export async function pack({ cwd = process.cwd(), ...options }: PackOptions) {
   // Create the temporary folder.
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "next-dev-utils-"));
 
@@ -128,6 +129,13 @@ export async function pack({ cwd = process.cwd(), ...options }: Options) {
       // Write the file to the response.
       res.end(file);
     });
+
+    // If provided, listen for the abort event and close the server.
+    if (options.signal) {
+      options.signal.addEventListener("abort", () => {
+        server.close();
+      });
+    }
 
     // Start the server, and block forever (the user will terminate this
     // with a SIGINT).
