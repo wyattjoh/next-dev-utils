@@ -10,7 +10,7 @@ pnpm install
 pnpm build
 ```
 
-If you're using fnm, you can execute this using the same version of node each
+If you're using [fnm](https://github.com/Schniz/fnm), you can execute this using the same version of node each
 time by aliasing it as follows in your `.bashrc` or `.zshrc` file:
 
 ```bash
