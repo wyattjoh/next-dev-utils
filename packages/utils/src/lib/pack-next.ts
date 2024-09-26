@@ -11,10 +11,14 @@ async function getPackageJSON(version: string) {
   let json;
   try {
     // Get the optional dependencies from the canary version.
-    json = await fetchClient.fetch(
-      `https://unpkg.com/next@${version}/package.json`
-    );
+    const res = await fetch(`https://unpkg.com/next@${version}/package.json`, {
+      redirect: "follow",
+    });
+    if (!res.ok) throw new Error("Failed to fetch package.json");
+    json = await res.text();
   } catch {
+    console.log("Failed, falling back to latest version...");
+
     // The fetch failed, fallback to the latest version.
     const res = await fetch("https://unpkg.com/next@canary/package.json", {
       redirect: "follow",
@@ -50,7 +54,9 @@ export async function packNext(options: PackOptions = {}) {
 
   let spinner: Ora | undefined;
   if (options.progress) {
-    spinner = ora("Getting optional dependencies from unpkg...").start();
+    spinner = ora(
+      `Getting optional dependencies for ${version} from unpkg...`
+    ).start();
   }
   try {
     const remote = await getPackageJSON(version);
@@ -73,7 +79,8 @@ export async function packNext(options: PackOptions = {}) {
       await fs.writeFile(pkgFilename, JSON.stringify(pkg, null, 2), "utf8");
     }
 
-    if (spinner) spinner.succeed("Got optional dependencies from unpkg");
+    if (spinner)
+      spinner.succeed(`Got optional dependencies from unpkg for ${version}`);
   } catch (err) {
     console.error(err);
     if (spinner) spinner.fail("Getting optional deps from unpkg failed");

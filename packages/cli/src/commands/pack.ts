@@ -5,6 +5,8 @@ import { pack as packLib } from "@next-dev-utils/utils";
 type Options = {
   json: boolean;
   serve: boolean;
+  progress: boolean;
+  verbose: boolean;
 };
 
 export async function packCommand(options: Options) {
@@ -12,7 +14,10 @@ export async function packCommand(options: Options) {
     throw new Error("Cannot use --json and --serve together");
   }
 
-  const url = await packLib({ ...options, progress: options.json });
+  const url = await packLib({
+    ...options,
+    progress: options.json || options.progress,
+  });
   await clipboard.write(url);
   if (!options.json) console.log("\nCopied URL to clipboard 🦄");
   if (options.json) console.log(url);
