@@ -6,11 +6,12 @@
     "dev": "turbo dev"
   },
   "devDependencies": {
+    "prettier": "^3.2.5",
     "syncpack": "^12.3.0",
-    "turbo": "^1.12.4",
-    "prettier": "^3.2.5"
+    "turbo": "^2.3.3"
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "packageManager": "pnpm@8.15.7+sha256.50783dd0fa303852de2dd1557cd4b9f07cb5b018154a6e76d0f40635d6cee019"
 }
