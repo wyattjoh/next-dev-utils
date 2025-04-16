@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { getConfig } from "@next-dev-utils/utils/config";
-import { pnpm, PNPMCommand } from "@next-dev-utils/utils";
+import { pnpm, type PNPMCommand } from "@next-dev-utils/utils";
 
 type Options = {
   command: readonly Commands[];
@@ -39,12 +39,13 @@ const create =
   async (args, options) => {
     const nextProjectPath = await getConfig("next_project_path");
 
+    let resolvedArgs = args;
     if (options?.filter) {
-      args ??= [];
-      args.unshift("--filter", ...options.filter);
+      resolvedArgs ??= [];
+      resolvedArgs.unshift("--filter", ...options.filter);
     }
 
-    return pnpm(args, {
+    return pnpm(resolvedArgs, {
       ...options,
       stdio: "inherit",
       cwd: directory ? path.join(nextProjectPath, directory) : nextProjectPath,
@@ -89,7 +90,7 @@ const commands: Record<Commands, Command | null> = {
  * @returns
  */
 const gather = (request: readonly Commands[]): Commands[] => {
-  let result: Commands[] = [];
+  const result: Commands[] = [];
 
   const helper = (command: Commands) => {
     for (const dep of dependencies[command]) {

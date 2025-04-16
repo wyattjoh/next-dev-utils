@@ -28,7 +28,12 @@ class CachedFetchClient implements FetchClient {
   private readonly cache: Map<string, FetchClientCacheEntry>;
 
   constructor() {
-    this.dir = find({ name: "next-dev-utils" })!;
+    const dir = find({ name: "next-dev-utils" });
+    if (!dir) {
+      throw new Error("Could not find cache directory");
+    }
+
+    this.dir = dir;
     this.cache = new Map();
   }
 

@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { getConfig } from "../config/config.js";
-import { Command } from "./command.js";
+import type { Command } from "./command.js";
 import { node } from "./node.js";
 
 type NextOptions = {

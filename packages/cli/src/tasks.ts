@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 // For all the tasks in the "../tasks" folder, we want to import it and add its
 // name to the list of tasks that we export from this file.
@@ -10,7 +10,7 @@ const files = fs.readdirSync(path.join(__dirname, "tasks"));
 export type Task = {
   name: string;
   filename: string;
-  handler: (args?: Record<string, any>) => Promise<void> | void;
+  handler: (args?: Record<string, unknown>) => Promise<void> | void;
 };
 
 export type Tasks = {
@@ -49,6 +49,7 @@ for (const filename of files) {
       // Replace the task with the default export from the module. Now every time
       // we call the task, we will call the default export from the module and not
       // this function.
+      // biome-ignore lint/suspicious/noExplicitAny: migration
       tasks[name] = task.default as any;
 
       // Call the task and return the result.

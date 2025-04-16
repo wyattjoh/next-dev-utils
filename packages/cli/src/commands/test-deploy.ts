@@ -53,7 +53,6 @@ export async function testDeployCommand(options: Options) {
       VERCEL_TEST_TOKEN,
       NEXT_TEST_VERSION: url,
     },
-    stdout: "inherit",
-    stderr: "inherit",
+    stdio: "inherit",
   });
 }

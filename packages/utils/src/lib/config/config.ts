@@ -38,11 +38,15 @@ const validators = {
   next_project_path: exists,
 };
 
-export async function getConfig(key: keyof typeof schema, options: any = {}) {
-  let value = config.get(key);
+export async function getConfig(
+  key: keyof typeof schema,
+  options: Parameters<typeof prompt>[1] = {}
+) {
+  const value = config.get(key);
   if (value) {
     if (key in validators) {
       try {
+        // biome-ignore lint/suspicious/noExplicitAny: migration
         await (validators as any)[key](value);
       } catch (err) {
         console.error((err as Error).message);
@@ -62,13 +66,17 @@ export async function getConfig(key: keyof typeof schema, options: any = {}) {
   return input;
 }
 
-export async function prompt(key: keyof typeof schema, options = {}) {
+export async function prompt(
+  key: keyof typeof schema,
+  options: Parameters<typeof inquirer.prompt>[0] = {}
+) {
   const { input } = await inquirer.prompt({
     type: secrets.includes(key) ? "password" : "input",
     name: "input",
     message: `${key}:`,
     validate: async (value) => {
       if (key in validators) {
+        // biome-ignore lint/suspicious/noExplicitAny: migration
         return await (validators as any)[key](value);
       }
 

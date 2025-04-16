@@ -6,7 +6,7 @@ import { execa } from "execa";
 import { next, node } from "@next-dev-utils/utils";
 
 async function removeDotNextDirectory(nextProjectPath: string) {
-  let spinner = ora("Removing existing .next directory").start();
+  const spinner = ora("Removing existing .next directory").start();
   try {
     await fs.rm(path.join(nextProjectPath, ".next"), {
       recursive: true,
@@ -74,8 +74,7 @@ export async function debugCommand(options: Options) {
       options.mode === "standalone"
     ) {
       await next(["build", nextProjectPath], {
-        stdout: "inherit",
-        stderr: "inherit",
+        stdio: "inherit",
         signal,
       });
     }
@@ -93,16 +92,14 @@ export async function debugCommand(options: Options) {
         case "start":
         case "prod":
           start = next(["start", nextProjectPath], {
-            stdout: "inherit",
-            stderr: "inherit",
+            stdio: "inherit",
             signal,
             nodeOptions,
           });
           break;
         case "dev":
           start = next(["dev", nextProjectPath], {
-            stdout: "inherit",
-            stderr: "inherit",
+            stdio: "inherit",
             signal,
             nodeOptions,
           });
@@ -112,8 +109,7 @@ export async function debugCommand(options: Options) {
           start = node(
             [path.join(nextProjectPath, ".next", "standalone", "server.js")],
             {
-              stdout: "inherit",
-              stderr: "inherit",
+              stdio: "inherit",
               signal,
             }
           );
@@ -156,13 +152,12 @@ export async function debugCommand(options: Options) {
       await Promise.all([start, run]);
     } else if (options.mode === "export") {
       await next(["export", nextProjectPath], {
-        stdout: "inherit",
-        stderr: "inherit",
+        stdio: "inherit",
         signal,
       });
     }
   } catch (err) {
-    if (!(err as any).isCanceled) {
+    if (!(err as { isCanceled: boolean }).isCanceled) {
       throw err;
     }
   }

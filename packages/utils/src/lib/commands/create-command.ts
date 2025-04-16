@@ -1,12 +1,12 @@
 import { Writable } from "node:stream";
 import child_process, { type SpawnOptions } from "node:child_process";
 
-import { Command, CommandOptions } from "./command.js";
+import type { Command, CommandOptions } from "./command.js";
 import { getEnvironment } from "../env.js";
 
-export type DefaultArgsFactory<O extends {} = {}> = (
-  options?: CommandOptions<O>
-) => string[];
+export type DefaultArgsFactory<
+  O extends Record<string, unknown> = Record<string, unknown>,
+> = (options?: CommandOptions<O>) => string[];
 
 export function runCommand(
   file: string,
@@ -69,15 +69,16 @@ export function runCommand(
   });
 }
 
-export function createCommand<O extends {} = {}>(
+export function createCommand<
+  O extends Record<string, unknown> = Record<string, unknown>,
+>(
   file: string,
   defaultArgs: string[] | DefaultArgsFactory<O> = [],
   defaultOptions?: CommandOptions<O>
 ): Command<CommandOptions<O>> {
-  return async (args = [], options) => {
-    if (typeof defaultArgs === "function") {
-      defaultArgs = defaultArgs(options);
-    }
+  return async (args, options) => {
+    const resolvedArgs =
+      typeof defaultArgs === "function" ? defaultArgs(options) : defaultArgs;
 
     const env = {
       // `process.env` is automatically expanded, no need to use here unless
@@ -88,7 +89,7 @@ export function createCommand<O extends {} = {}>(
       ...(options?.env ?? {}),
     };
 
-    return runCommand(file, [...defaultArgs, ...args], {
+    return runCommand(file, [...resolvedArgs, ...(args ?? [])], {
       ...defaultOptions,
       ...options,
       env,

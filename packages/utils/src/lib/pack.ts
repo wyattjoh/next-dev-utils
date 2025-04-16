@@ -5,7 +5,7 @@ import { existsSync, promises as fs } from "node:fs";
 import os from "node:os";
 import http from "node:http";
 
-import ora, { Ora } from "ora";
+import ora, { type Ora } from "ora";
 import * as minio from "minio";
 import inquirer from "inquirer";
 
@@ -68,7 +68,7 @@ export async function pack({ cwd = process.cwd(), ...options }: PackOptions) {
         }) ?? "";
 
     if (!absolutePackedFile || !existsSync(absolutePackedFile)) {
-      throw new Error("Could not find " + absolutePackedFile);
+      throw new Error(`Could not find ${absolutePackedFile}`);
     }
 
     packedFile = path.basename(absolutePackedFile);
@@ -187,7 +187,7 @@ export async function pack({ cwd = process.cwd(), ...options }: PackOptions) {
     spinner = ora("Checking if file already exists in bucket...").start();
   }
 
-  let exists;
+  let exists: boolean;
   try {
     const metadata = await client.statObject(BUCKET, packedFile);
     exists = metadata.etag === md5;
