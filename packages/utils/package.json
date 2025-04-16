@@ -14,7 +14,8 @@
   "type": "module",
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "conf": "^12.0.0",
