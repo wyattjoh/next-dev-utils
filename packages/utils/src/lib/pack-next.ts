@@ -1,26 +1,27 @@
 import path from "node:path";
 import { promises as fs } from "node:fs";
 
-import ora, { Ora } from "ora";
+import ora, { type Ora } from "ora";
 
-import { client as fetchClient } from "./client.js";
 import { getConfig } from "./config/config.js";
 import { type PackOptions, pack } from "./pack.js";
 
 async function getPackageJSON(version: string) {
-  let json;
+  let json: string;
   try {
+    const signal = AbortSignal.timeout(10000);
     // Get the optional dependencies from the canary version.
-    const res = await fetch(`https://unpkg.com/next@${version}/package.json`, {
+    const res = await fetch(`https://registry.npmjs.org/next/${version}`, {
       redirect: "follow",
+      signal,
     });
     if (!res.ok) throw new Error("Failed to fetch package.json");
     json = await res.text();
   } catch {
-    console.log("Failed, falling back to latest version...");
+    console.error("Failed, falling back to latest version...");
 
     // The fetch failed, fallback to the latest version.
-    const res = await fetch("https://unpkg.com/next@canary/package.json", {
+    const res = await fetch("https://registry.npmjs.org/next/canary", {
       redirect: "follow",
     });
     if (!res.ok) throw new Error("Failed to fetch package.json");
@@ -55,7 +56,7 @@ export async function packNext(options: PackOptions = {}) {
   let spinner: Ora | undefined;
   if (options.progress) {
     spinner = ora(
-      `Getting optional dependencies for ${version} from unpkg...`
+      `Getting optional dependencies for ${version} from npm...`
     ).start();
   }
   try {
@@ -64,7 +65,7 @@ export async function packNext(options: PackOptions = {}) {
     // If the remote version is different than the local version, we need to use
     // the remote version's package.json.
     if (remote.version !== version) {
-      console.log(
+      console.error(
         "Using remote package.json, local version doesn't exist. Local edits to package.json will be ignored."
       );
 
@@ -80,10 +81,10 @@ export async function packNext(options: PackOptions = {}) {
     }
 
     if (spinner)
-      spinner.succeed(`Got optional dependencies from unpkg for ${version}`);
+      spinner.succeed(`Got optional dependencies from npm for ${version}`);
   } catch (err) {
     console.error(err);
-    if (spinner) spinner.fail("Getting optional deps from unpkg failed");
+    if (spinner) spinner.fail("Getting optional deps from npm failed");
     process.exit(1);
   }
 
