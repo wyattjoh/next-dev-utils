@@ -50,6 +50,10 @@ yargs(hideBin(process.argv))
         type: "boolean",
         default: false,
       },
+      install: {
+        type: "boolean",
+        default: false,
+      },
     },
     packNextCommand
   )
