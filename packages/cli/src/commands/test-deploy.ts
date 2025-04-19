@@ -42,7 +42,7 @@ export async function testDeployCommand(options: Options) {
   const VERCEL_TEST_TOKEN = await getConfig("vercel_test_token");
 
   // Pack the next project.
-  const url = await packNext();
+  const url = await packNext({ progress: true });
 
   // Start the test deploy. If this fails, the error will be printed to the
   // console because it'll throw.
