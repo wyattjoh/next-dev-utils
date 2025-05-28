@@ -12,6 +12,10 @@
     }
   },
   "type": "module",
+  "license": "ISC",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
