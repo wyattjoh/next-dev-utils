@@ -27,7 +27,7 @@ importers:
   packages/cli:
     dependencies:
       '@next-dev-utils/utils':
-        specifier: 0.0.0
+        specifier: 1.0.0
         version: link:../utils
       clipboardy:
         specifier: ^4.0.0
