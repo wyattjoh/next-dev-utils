@@ -2,3 +2,4 @@ dist
 out
 .turbo
 packages/cli/src/tasks/*.ts
+node_modules
