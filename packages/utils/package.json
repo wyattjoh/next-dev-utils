@@ -1,6 +1,6 @@
 {
   "name": "@next-dev-utils/utils",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "exports": {
     ".": {
       "import": "./dist/lib.js",
