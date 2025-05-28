@@ -2,7 +2,7 @@
   "name": "@next-dev-utils/cli",
   "version": "0.0.1",
   "bin": {
-    "next-dev-utils": "./bin/next-dev-utils.js"
+    "nu": "./bin/next-dev-utils.mjs"
   },
   "scripts": {
     "build": "tsup",
