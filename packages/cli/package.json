@@ -1,6 +1,6 @@
 {
   "name": "@next-dev-utils/cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "bin": {
     "nu": "./bin/next-dev-utils.mjs"
   },
@@ -22,7 +22,7 @@
     "strip-indent": "^4.0.0",
     "inquirer": "^9.2.14",
     "yargs": "^17.7.2",
-    "@next-dev-utils/utils": "0.0.0"
+    "@next-dev-utils/utils": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
