@@ -187,18 +187,6 @@ nu config get bucket                                # Get current bucket
 nu config set secret_key                           # Prompts for hidden input
 ```
 
-### Task Runner
-
-#### `nu run [task]`
-
-Extensible task runner with interactive selection.
-
-**Examples:**
-```bash
-nu run                       # Interactive task selection
-nu run my-custom-task       # Run specific task
-```
-
 ## Configuration
 
 The CLI maintains persistent configuration for seamless operation across different environments. All sensitive data like secret keys and tokens use hidden input prompts for security.
