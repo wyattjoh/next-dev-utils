@@ -15,8 +15,6 @@ import { makeCommand } from "./commands/make.js";
 
 import { schema } from "@next-dev-utils/utils/config";
 import { nextCommand } from "./commands/next.js";
-import tasks from "./tasks.js";
-import inquirer from "inquirer";
 
 yargs(hideBin(process.argv))
   .command(
@@ -157,49 +155,6 @@ yargs(hideBin(process.argv))
       },
     },
     nextCommand
-  )
-  .command(
-    "run [task]",
-    "run a task",
-    (y) =>
-      y
-        .option("task", {
-          choices: Object.keys(tasks),
-          description: "the task to run",
-        })
-        .strict(false),
-
-    // {
-    //   task: {
-    //     choices: Object.keys(tasks),
-    //     description: "the task to run",
-    //   },
-    // },
-    async (args) => {
-      if (!args.task) {
-        const answers = await inquirer.prompt<{
-          task: string;
-        }>({
-          task: {
-            type: "list",
-            message: "Select a task",
-            choices: Object.keys(tasks),
-          },
-        });
-
-        args.task = answers.task;
-      }
-
-      // Check to see if the task exists. If it does, run it. If it doesn't,
-      // throw an error.
-      const task = tasks[args.task];
-      if (!task) {
-        throw new Error(`Task "${args.task}" not found`);
-      }
-
-      console.log("EXECUTING TASK:", task, args);
-      return task.handler(args);
-    }
   )
 
   .command(
