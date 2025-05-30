@@ -11,14 +11,14 @@
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.27.9",
-    "prettier": "^3.2.5",
-    "syncpack": "^12.3.0",
+    "prettier": "^3.3.3",
+    "syncpack": "^13.0.0",
     "turbo": "^2.3.3"
   },
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@8.15.7+sha256.50783dd0fa303852de2dd1557cd4b9f07cb5b018154a6e76d0f40635d6cee019"
+  "packageManager": "pnpm@9.15.0"
 }

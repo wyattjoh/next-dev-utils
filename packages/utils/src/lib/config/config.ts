@@ -38,9 +38,16 @@ const validators = {
   next_project_path: exists,
 };
 
+function hasValidator(
+  key: keyof typeof schema
+): key is keyof typeof validators {
+  return key in validators;
+}
+
 export async function getConfig(
   key: keyof typeof schema,
-  options: Parameters<typeof prompt>[1] = {}
+  // biome-ignore lint/suspicious/noExplicitAny: inquirer v12 type compatibility
+  options: Record<string, any> = {}
 ) {
   const value = config.get(key);
   if (value) {
@@ -68,22 +75,23 @@ export async function getConfig(
 
 export async function prompt(
   key: keyof typeof schema,
-  options: Parameters<typeof inquirer.prompt>[0] = {}
+  options: Record<string, unknown> = {}
 ) {
-  const { input } = await inquirer.prompt({
-    type: secrets.includes(key) ? "password" : "input",
-    name: "input",
-    message: `${key}:`,
-    validate: async (value) => {
-      if (key in validators) {
-        // biome-ignore lint/suspicious/noExplicitAny: migration
-        return await (validators as any)[key](value);
-      }
+  const { input } = await inquirer.prompt([
+    {
+      type: secrets.includes(key) ? "password" : "input",
+      name: "input",
+      message: `${key}:`,
+      validate: async (value: string) => {
+        if (hasValidator(key)) {
+          return await validators[key](value);
+        }
 
-      return true;
+        return true;
+      },
+      ...options,
     },
-    ...options,
-  });
+  ]);
 
   return input;
 }

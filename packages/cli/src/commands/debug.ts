@@ -126,7 +126,6 @@ export async function debugCommand(options: Options) {
         // Start the run command.
         run = execa(options.run, {
           shell: true,
-          verbose: true,
           stdio: "inherit",
           signal,
         });

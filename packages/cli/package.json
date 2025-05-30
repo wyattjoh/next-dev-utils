@@ -16,19 +16,19 @@
   },
   "dependencies": {
     "clipboardy": "^4.0.0",
-    "dotenv": "^16.4.4",
-    "execa": "^8.0.1",
-    "ora": "^8.0.1",
+    "dotenv": "^16.4.5",
+    "execa": "^9.5.2",
+    "ora": "^8.1.1",
     "strip-indent": "^4.0.0",
-    "inquirer": "^9.2.14",
+    "inquirer": "^12.3.0",
     "yargs": "^17.7.2",
     "@next-dev-utils/utils": "1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
+    "@types/node": "^22.10.2",
     "@types/inquirer": "^9.0.7",
-    "@types/yargs": "^17.0.32",
-    "typescript": "^5.3.3",
-    "tsup": "^8.0.2"
+    "@types/yargs": "^17.0.33",
+    "typescript": "^5.7.2",
+    "tsup": "^8.3.5"
   }
 }
