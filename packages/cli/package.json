@@ -5,8 +5,8 @@
     "nu": "./bin/next-dev-utils.mjs"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "type-check": "tsc --noEmit"
   },
   "type": "module",
@@ -22,13 +22,13 @@
     "strip-indent": "^4.0.0",
     "inquirer": "^12.3.0",
     "yargs": "^17.7.2",
-    "@next-dev-utils/utils": "1.0.1"
+    "@next-dev-utils/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/inquirer": "^9.0.7",
     "@types/yargs": "^17.0.33",
     "typescript": "^5.7.2",
-    "tsup": "^8.3.5"
+    "tsdown": "^0.12.5"
   }
 }

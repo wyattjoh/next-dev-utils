@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["./src/cli.ts"],
@@ -6,9 +6,4 @@ export default defineConfig({
   outDir: "dist",
   format: "esm",
   platform: "node",
-  dts: true,
-  bundle: true,
-  // splitting: true,
-  // sourcemap: true,
-  // dts: true,
 });
