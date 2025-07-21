@@ -24,6 +24,14 @@ type Options = {
   nextProjectDirectory: string;
   rm: boolean;
   run?: string;
+
+  /**
+   * This is a special property that is used to pass through unknown options to
+   * the command. It is not used by the command itself, but is used by the CLI
+   * to pass through unknown options to the command. We use this to forward the
+   * unknown options to the command.
+   */
+  _: Array<string | number>;
 };
 
 export async function debugCommand(options: Options) {
@@ -64,6 +72,14 @@ export async function debugCommand(options: Options) {
     process.exit(0);
   });
 
+  // Collect any of the unknown options and pass them to the command.
+  const args: string[] = [];
+  for (const arg of options._) {
+    if (typeof arg === "string") {
+      args.push(arg);
+    }
+  }
+
   // TODO: add any node options for all next commands
   const nodeOptions: string[] = [];
 
@@ -73,7 +89,7 @@ export async function debugCommand(options: Options) {
       options.mode === "prod" ||
       options.mode === "standalone"
     ) {
-      await next(["build", nextProjectPath], {
+      await next(["build", nextProjectPath, ...args], {
         stdio: "inherit",
         signal,
       });
@@ -91,14 +107,14 @@ export async function debugCommand(options: Options) {
       switch (options.mode) {
         case "start":
         case "prod":
-          start = next(["start", nextProjectPath], {
+          start = next(["start", nextProjectPath, ...args], {
             stdio: "inherit",
             signal,
             nodeOptions,
           });
           break;
         case "dev":
-          start = next(["dev", nextProjectPath], {
+          start = next(["dev", nextProjectPath, ...args], {
             stdio: "inherit",
             signal,
             nodeOptions,
@@ -150,7 +166,7 @@ export async function debugCommand(options: Options) {
       // Wait for both the server and the run command to finish.
       await Promise.all([start, run]);
     } else if (options.mode === "export") {
-      await next(["export", nextProjectPath], {
+      await next(["export", nextProjectPath, ...args], {
         stdio: "inherit",
         signal,
       });

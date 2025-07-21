@@ -17,6 +17,7 @@ import { schema } from "@next-dev-utils/utils/config";
 import { nextCommand } from "./commands/next.js";
 
 yargs(hideBin(process.argv))
+  .parserConfiguration({ "unknown-options-as-args": true })
   .command(
     "test-deploy <test-file>",
     "performs a pack and test deploy of the specified test",
@@ -192,5 +193,4 @@ yargs(hideBin(process.argv))
     debugCommand
   )
   .demandCommand(1)
-  .strict()
   .parse();
