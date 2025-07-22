@@ -44,7 +44,8 @@ async function getPackageJSON(version: string) {
 }
 
 export async function packNext(options: PackOptions = {}) {
-  const nextProjectPath = await getConfig("next_project_path");
+  const nextProjectPath: string =
+    process.env.NEXT_PROJECT_PATH ?? (await getConfig("next_project_path"));
   const next = path.join(nextProjectPath, "packages", "next");
 
   // Get the current package.json.
