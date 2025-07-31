@@ -1,7 +1,10 @@
 import path from "node:path";
 
-import { getConfig } from "@next-dev-utils/utils/config";
-import { pnpm, type PNPMCommand } from "@next-dev-utils/utils";
+import {
+  getNextProjectPath,
+  pnpm,
+  type PNPMCommand,
+} from "@next-dev-utils/utils";
 
 type Options = {
   command: readonly Commands[];
@@ -37,7 +40,7 @@ type Service = PNPMCommand<{
 const create =
   (directory?: string): Service =>
   async (args, options) => {
-    const nextProjectPath = await getConfig("next_project_path");
+    const nextProjectPath = await getNextProjectPath();
 
     let resolvedArgs = args;
     if (options?.filter) {

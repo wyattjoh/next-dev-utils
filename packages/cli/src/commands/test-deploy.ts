@@ -2,14 +2,14 @@ import path from "node:path";
 import { existsSync } from "node:fs";
 
 import { getConfig } from "@next-dev-utils/utils/config";
-import { packNext, pnpm } from "@next-dev-utils/utils";
+import { packNext, pnpm, getNextProjectPath } from "@next-dev-utils/utils";
 
 type Options = {
   "test-file": string;
 };
 
 export async function testDeployCommand(options: Options) {
-  const nextProjectPath = await getConfig("next_project_path");
+  const nextProjectPath = await getNextProjectPath();
   let testFile = options["test-file"];
   // Ensure the file exists relative to the current working directory.
   if (!path.isAbsolute(testFile)) {

@@ -3,7 +3,7 @@ import path from "node:path";
 
 import stripIndent from "strip-indent";
 
-import { getConfig } from "@next-dev-utils/utils/config";
+import { getNextProjectPath } from "@next-dev-utils/utils";
 
 type Options = {
   name: string;
@@ -12,7 +12,7 @@ type Options = {
 export async function createReproductionCommand(args: Options) {
   // In the reproductions folder, create a folder with the name of the reproduction
   const reproduction = path.join(
-    await getConfig("next_project_path"),
+    await getNextProjectPath(),
     "__reproductions__",
     args.name
   );
