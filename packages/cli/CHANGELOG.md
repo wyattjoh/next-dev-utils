@@ -1,5 +1,17 @@
 # @next-dev-utils/cli
 
+## 1.2.0
+
+### Minor Changes
+
+- f0fae0c: Add intelligent Next.js project path resolution with git worktree support and environment variable override capability. The new `getNextProjectPath()` function automatically detects git worktrees and uses the appropriate worktree path, with support for `NEXT_PROJECT_PATH` environment variable override.
+
+### Patch Changes
+
+- 6c903cf: Enable CLI option pass-through to Next.js commands
+- Updated dependencies [f0fae0c]
+  - @next-dev-utils/utils@1.1.0
+
 ## 1.1.1
 
 ### Patch Changes
