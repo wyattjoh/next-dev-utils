@@ -12,6 +12,7 @@ import { packCommand } from "./commands/pack.js";
 import { packNextCommand } from "./commands/pack-next.js";
 import { testDeployCommand } from "./commands/test-deploy.js";
 import { makeCommand } from "./commands/make.js";
+import { cleanupCommand } from "./commands/cleanup.js";
 
 import { schema } from "@next-dev-utils/utils/config";
 import { nextCommand } from "./commands/next.js";
@@ -78,6 +79,23 @@ yargs(hideBin(process.argv))
       },
     },
     packCommand
+  )
+  .command(
+    "cleanup",
+    "removes files older than 1 day from cloud storage bucket",
+    {
+      verbose: {
+        type: "boolean",
+        default: false,
+        description: "show detailed output",
+      },
+      "dry-run": {
+        type: "boolean",
+        default: false,
+        description: "show what would be deleted without actually deleting",
+      },
+    },
+    cleanupCommand
   )
   .command(
     "config <operation> [key] [value]",

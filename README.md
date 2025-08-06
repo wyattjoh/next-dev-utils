@@ -125,6 +125,24 @@ nu pack                      # Pack current package
 nu pack --serve --verbose   # Pack, serve locally with verbose output
 ```
 
+#### `nu cleanup`
+
+Remove old packages from cloud storage to manage space efficiently.
+
+**Options:**
+- `--verbose` - Show detailed output including files being deleted
+- `--dry-run` - Preview what would be deleted without making changes
+
+**Description:**
+Automatically removes packages older than 1 day from the configured cloud storage bucket. This helps maintain storage hygiene by cleaning up temporary test packages and old deployments.
+
+**Examples:**
+```bash
+nu cleanup                   # Remove old packages (silent mode)
+nu cleanup --dry-run        # Preview what would be deleted
+nu cleanup --verbose        # Show detailed deletion progress
+```
+
 ### Testing
 
 #### `nu test-deploy <test-file>`
