@@ -1,5 +1,16 @@
 # @next-dev-utils/cli
 
+## 1.3.0
+
+### Minor Changes
+
+- 3f14c91: Add storage cleanup command to remove old packages from cloud storage bucket. The new `cleanup` command automatically removes files older than 1 day, helping maintain storage hygiene by cleaning up temporary test packages and old deployments. Includes `--dry-run` option for safe preview and `--verbose` option for detailed output.
+
+### Patch Changes
+
+- Updated dependencies [3f14c91]
+  - @next-dev-utils/utils@1.2.0
+
 ## 1.2.0
 
 ### Minor Changes
