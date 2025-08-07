@@ -1,4 +1,4 @@
-import find from "find-cache-dir";
+import find from "find-cache-directory";
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
 import process from "node:process";

@@ -17,10 +17,11 @@
     "jsr:@std/path@~1.0.6": "1.0.9",
     "jsr:@std/text@~1.0.7": "1.0.15",
     "jsr:@valibot/valibot@^1.1.0": "1.1.0",
+    "jsr:@wyattjoh/next-dev-utils@*": "2.1.0",
     "npm:@types/node@*": "22.15.15",
     "npm:clipboardy@4": "4.0.0",
     "npm:execa@^9.6.0": "9.6.0",
-    "npm:find-cache-dir@6": "6.0.0",
+    "npm:find-cache-directory@6": "6.0.0",
     "npm:inquirer@^12.9.0": "12.9.0",
     "npm:lefthook@^1.12.2": "1.12.2",
     "npm:ora@^8.2.0": "8.2.0",
@@ -102,6 +103,20 @@
     },
     "@valibot/valibot@1.1.0": {
       "integrity": "2617f02b532011b8140926899d420a3e1bbb0fcb7cdf8e7b669df89e7edd7f5f"
+    },
+    "@wyattjoh/next-dev-utils@2.1.0": {
+      "integrity": "bb3e432365c9d02beb3337d66fff7db5793c005cfbc09c638c02063d91fbe769",
+      "dependencies": [
+        "jsr:@bradenmacdonald/s3-lite-client",
+        "jsr:@cliffy/command",
+        "jsr:@cliffy/prompt",
+        "jsr:@std/dotenv",
+        "jsr:@valibot/valibot",
+        "npm:clipboardy",
+        "npm:execa",
+        "npm:ora",
+        "npm:strip-indent"
+      ]
     }
   },
   "npm": {
@@ -348,20 +363,15 @@
         "is-unicode-supported@2.1.0"
       ]
     },
-    "find-cache-dir@6.0.0": {
-      "integrity": "sha512-nZMBQ0IuwcMgW8jsiShHtj2WQS6ReVTOMGiSnriCdWBUN/eVsolBlE0EPXe2R5MfIWtqkpM4grjGuqimbWhUFA==",
+    "find-cache-directory@6.0.0": {
+      "integrity": "sha512-CvFd5ivA6HcSHbD+59P7CyzINHXzwhuQK8RY7CxJZtgDSAtRlHiCaQpZQ2lMR/WRyUIEmzUvL6G2AGurMfegZA==",
       "dependencies": [
         "common-path-prefix",
         "pkg-dir"
-      ],
-      "deprecated": true
-    },
-    "find-up@6.3.0": {
-      "integrity": "sha512-v2ZsoEuVHYy8ZIlYqwPe/39Cy+cFDzp4dXPaxNvkEuouymu+2Jbz0PxpKarJHYJTmv2HWT3O382qY8l4jMWthw==",
-      "dependencies": [
-        "locate-path",
-        "path-exists"
       ]
+    },
+    "find-up-simple@1.0.0": {
+      "integrity": "sha512-q7Us7kcjj2VMePAa02hDAF6d+MzsdsAWEwYyOpwUtlerRBkOEPBCRZrAV4XfcSN8fHAgaD0hP7miwoay6DCprw=="
     },
     "get-east-asian-width@1.3.0": {
       "integrity": "sha512-vpeMIQKxczTD/0s2CdEWHcb0eeJe6TFjxb+J5xgX7hScxqrGuyjmv4c1D4A/gelKfyox0gJJwIHF+fLjeaM8kQ=="
@@ -514,12 +524,6 @@
       "scripts": true,
       "bin": true
     },
-    "locate-path@7.2.0": {
-      "integrity": "sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==",
-      "dependencies": [
-        "p-locate"
-      ]
-    },
     "log-symbols@6.0.0": {
       "integrity": "sha512-i24m8rpwhmPIS4zscNzK6MSEhk0DUWa/8iYQWxhffV8jkI4Phvs3F+quL5xvS0gdQR0FyTCMMH33Y78dDTzzIw==",
       "dependencies": [
@@ -584,23 +588,8 @@
     "os-tmpdir@1.0.2": {
       "integrity": "sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g=="
     },
-    "p-limit@4.0.0": {
-      "integrity": "sha512-5b0R4txpzjPWVw/cXXUResoD4hb6U/x9BH08L7nw+GN1sezDzPdxeRvpc9c433fZhBan/wusjbCsqwqm4EIBIQ==",
-      "dependencies": [
-        "yocto-queue"
-      ]
-    },
-    "p-locate@6.0.0": {
-      "integrity": "sha512-wPrq66Llhl7/4AGC6I+cqxT07LhXvWL08LNXz1fENOw0Ap4sRZZ/gZpTTJ5jpurzzzfS2W/Ge9BY3LgLjCShcw==",
-      "dependencies": [
-        "p-limit"
-      ]
-    },
     "parse-ms@4.0.0": {
       "integrity": "sha512-TXfryirbmq34y8QBwgqCVLi+8oA3oWx2eAnSn62ITyEhEYaWRlVZ2DvMM9eZbMs/RfxPu/PK/aBLyGj4IrqMHw=="
-    },
-    "path-exists@5.0.0": {
-      "integrity": "sha512-RjhtfwJOxzcFmNOi6ltcbcu4Iu+FL3zEj83dk4kAS+fVpTxXLO1b38RvJgT/0QwvV/L3aY9TAnyv0EOqW4GoMQ=="
     },
     "path-key@3.1.1": {
       "integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q=="
@@ -608,10 +597,10 @@
     "path-key@4.0.0": {
       "integrity": "sha512-haREypq7xkM7ErfgIyA0z+Bj4AGKlMSdlQE2jvJo6huWD1EdkKYV+G/T4nq0YEF2vgTT8kqMFKo1uHn950r4SQ=="
     },
-    "pkg-dir@7.0.0": {
-      "integrity": "sha512-Ie9z/WINcxxLp27BKOCHGde4ITq9UklYKDzVo1nhk5sqGEXU3FpkwP5GM2voTGJkGd9B3Otl+Q4uwSOeSUtOBA==",
+    "pkg-dir@8.0.0": {
+      "integrity": "sha512-4peoBq4Wks0riS0z8741NVv+/8IiTvqnZAr8QGgtdifrtpdXbNw/FxRS1l6NFqm4EMzuS0EDqNNx4XGaz8cuyQ==",
       "dependencies": [
-        "find-up"
+        "find-up-simple"
       ]
     },
     "pretty-ms@9.2.0": {
@@ -730,9 +719,6 @@
         "strip-ansi@6.0.1"
       ]
     },
-    "yocto-queue@1.2.1": {
-      "integrity": "sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg=="
-    },
     "yoctocolors-cjs@2.1.2": {
       "integrity": "sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA=="
     },
@@ -772,7 +758,7 @@
       "jsr:@valibot/valibot@^1.1.0",
       "npm:clipboardy@4",
       "npm:execa@^9.6.0",
-      "npm:find-cache-dir@6",
+      "npm:find-cache-directory@6",
       "npm:inquirer@^12.9.0",
       "npm:lefthook@^1.12.2",
       "npm:ora@^8.2.0",

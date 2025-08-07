@@ -1,6 +1,6 @@
 {
   "name": "@wyattjoh/next-dev-utils",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "exports": {
     ".": "./src/cli.ts",
     "./lib": "./src/lib/index.ts"
@@ -8,11 +8,7 @@
   "$schema": "https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json",
   "license": "MIT",
   "publish": {
-    "include": [
-      "src/**/*.ts",
-      "README.md",
-      "LICENSE"
-    ]
+    "include": ["src/**/*.ts", "README.md", "LICENSE"]
   },
   "tasks": {
     "build": "deno compile --allow-all --output=./next-dev-utils src/cli.ts"
@@ -24,7 +20,7 @@
     "@valibot/valibot": "jsr:@valibot/valibot@^1.1.0",
     "clipboardy": "npm:clipboardy@^4.0.0",
     "execa": "npm:execa@^9.6.0",
-    "find-cache-dir": "npm:find-cache-dir@^6.0.0",
+    "find-cache-directory": "npm:find-cache-directory@^6.0.0",
     "lefthook": "npm:lefthook@^1.12.2",
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
@@ -51,9 +47,7 @@
   },
   "lint": {
     "rules": {
-      "tags": [
-        "recommended"
-      ]
+      "tags": ["recommended"]
     }
   }
 }
