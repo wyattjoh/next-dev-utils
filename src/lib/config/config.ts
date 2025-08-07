@@ -4,8 +4,11 @@ import {
   Secret,
   type SecretOptions,
 } from "@cliffy/prompt";
-import { getItem, setItem } from "@jollytoad/store-deno-fs";
+import fs from "node:fs/promises";
+import { join } from "node:path";
 import * as v from "@valibot/valibot";
+import { homedir } from "node:os";
+
 import { exists } from "./validators/exists.ts";
 
 /**
@@ -41,31 +44,31 @@ export type Config = v.InferOutput<typeof ConfigSchema>;
  */
 export type ConfigKey = keyof Config;
 
-// For backward compatibility with schema reference
-export const schema = ConfigSchema.entries;
+const CONFIG_FILE_PATH = join(homedir(), ".next-dev-utils.json");
 
-const CONFIG_NAMESPACE = ["next-dev-utils", "config"];
-
-class TypedConfig {
-  async get<K extends ConfigKey>(key: K): Promise<Config[K] | undefined> {
-    const value = await getItem([...CONFIG_NAMESPACE, key]);
-    if (value === undefined) return undefined;
-
-    // Since all our schema fields are optional strings, we can directly return the value
-    // after basic type checking
-    if (typeof value === "string" || value === undefined) {
-      return value as Config[K];
-    }
-
-    return undefined;
-  }
-
-  async set<K extends ConfigKey>(key: K, value: Config[K]): Promise<void> {
-    await setItem([...CONFIG_NAMESPACE, key], value);
-  }
+async function loadConfig(): Promise<Config> {
+  const json = await fs.readFile(CONFIG_FILE_PATH, "utf-8");
+  return v.parse(ConfigSchema, JSON.parse(json));
 }
 
-const config = new TypedConfig();
+async function saveConfig(config: Config): Promise<void> {
+  await fs.writeFile(CONFIG_FILE_PATH, JSON.stringify(config, null, 2));
+}
+
+/**
+ * Sets a configuration value by key.
+ *
+ * @param key - The configuration key to set.
+ * @param value - The value to set for the key.
+ */
+export async function setConfig<K extends ConfigKey>(
+  key: K,
+  value: Config[K],
+): Promise<void> {
+  const config = await loadConfig();
+  config[key] = value;
+  await saveConfig(config);
+}
 
 const validators = {
   next_project_path: exists,
@@ -75,28 +78,6 @@ function hasValidator(
   key: ConfigKey,
 ): key is keyof typeof validators {
   return key in validators;
-}
-
-/**
- * Sets a configuration value.
- *
- * @param key - The configuration key to set.
- * @param value - The value to set for the key.
- *
- * @example
- * ```ts
- * // Set the Next.js project path
- * await setConfig('next_project_path', '/path/to/next.js');
- *
- * // Set S3 bucket configuration
- * await setConfig('bucket', 'my-bucket');
- * ```
- */
-export async function setConfig<K extends ConfigKey>(
-  key: K,
-  value: Config[K],
-): Promise<void> {
-  await config.set(key, value);
 }
 
 /**
@@ -125,7 +106,8 @@ export async function getConfig<K extends ConfigKey>(
   key: K,
   options: Omit<InputOptions, "message"> | Omit<SecretOptions, "message"> = {},
 ): Promise<string> {
-  const value = await config.get(key);
+  const config = await loadConfig();
+  const value = config[key];
   if (value) {
     if (key in validators) {
       try {
@@ -148,7 +130,7 @@ export async function getConfig<K extends ConfigKey>(
   console.log(`${key} is missing from config, please enter it now:`);
   const input = await prompt(key, options);
 
-  await config.set(key, input);
+  await setConfig(key, input);
 
   return input;
 }
