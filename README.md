@@ -10,6 +10,10 @@ A powerful CLI toolkit for Next.js development, providing utilities for packagin
 curl -fsSL https://raw.githubusercontent.com/wyattjoh/next-dev-utils/refs/heads/main/scripts/install.sh | bash
 ```
 
+### Updating
+
+Simply re-run the installation command from above and it'll update your installed binaries.
+
 ### Direct Deno Install
 
 ```bash
