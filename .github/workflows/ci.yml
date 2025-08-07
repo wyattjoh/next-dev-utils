@@ -24,5 +24,8 @@ jobs:
       - name: Lint code
         run: deno lint
 
+      - name: Type check
+        run: deno check
+
       - name: Build packages
         run: deno task build
