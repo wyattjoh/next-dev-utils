@@ -15,3 +15,8 @@ pre-commit:
     check:
       run: deno check
       glob: "*.ts"
+
+pre-push:
+  commands:
+    publish-dry-run:
+      run: deno publish --dry-run --allow-dirty

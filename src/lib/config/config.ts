@@ -17,7 +17,7 @@ import { exists } from "./validators/exists.ts";
  */
 export const secrets = ["secret_key", "vercel_test_token"];
 
-const ConfigSchema = v.object({
+const schema = v.object({
   next_project_path: v.optional(v.string()),
   endpoint: v.optional(v.string()),
   bucket: v.optional(v.string()),
@@ -31,13 +31,13 @@ const ConfigSchema = v.object({
  * Array of all valid configuration keys.
  */
 export const ConfigKeys: string[] = Object.keys(
-  ConfigSchema.entries,
+  schema.entries,
 );
 
 /**
  * Configuration object type with all available settings.
  */
-export type Config = v.InferOutput<typeof ConfigSchema>;
+export type Config = v.InferOutput<typeof schema>;
 
 /**
  * Union type of all valid configuration keys.
@@ -48,7 +48,7 @@ const CONFIG_FILE_PATH = join(homedir(), ".next-dev-utils.json");
 
 async function loadConfig(): Promise<Config> {
   const json = await fs.readFile(CONFIG_FILE_PATH, "utf-8");
-  return v.parse(ConfigSchema, JSON.parse(json));
+  return v.parse(schema, JSON.parse(json));
 }
 
 async function saveConfig(config: Config): Promise<void> {

@@ -30,7 +30,7 @@
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
     "strip-indent": "npm:strip-indent@^4.0.0",
     "inquirer": "npm:inquirer@^12.9.0",
-    "kia/": "https://deno.land/x/kia@0.4.1/"
+    "ora": "npm:ora@^8.2.0"
   },
   "compilerOptions": {
     "strict": true,

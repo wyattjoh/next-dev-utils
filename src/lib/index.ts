@@ -10,6 +10,3 @@ export * from "./pack.ts";
 export * from "./commands/next.ts";
 export * from "./commands/node.ts";
 export * from "./commands/pnpm.ts";
-
-// Config exports
-export * from "./config/config.ts";

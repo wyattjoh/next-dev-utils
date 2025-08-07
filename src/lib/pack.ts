@@ -6,7 +6,7 @@ import { existsSync, promises as fs } from "node:fs";
 import os from "node:os";
 import http from "node:http";
 
-import Kia from "kia/mod.ts";
+import ora from "ora";
 import { S3Client } from "@bradenmacdonald/s3-lite-client";
 import { Confirm } from "@cliffy/prompt";
 
@@ -89,11 +89,9 @@ export async function pack(
   // Get the version from the package.json.
   const version: string = pkg.version;
 
-  let spinner: Kia | undefined;
-  if (options.progress) {
-    spinner = new Kia(`Packing ${name}...`);
-    spinner.start();
-  }
+  let spinner = options.progress
+    ? ora(`Packing ${name}...`).start()
+    : undefined;
 
   let absolutePackedFile: string;
   let packedFile: string;
@@ -126,8 +124,7 @@ export async function pack(
 
   // Calculate an md5 hash of the packed file.
   if (spinner) {
-    spinner = new Kia("Calculating md5 hash of packed file...");
-    spinner.start();
+    spinner = ora("Calculating md5 hash of packed file...").start();
   }
 
   let md5: string;
@@ -234,8 +231,7 @@ export async function pack(
   // Check if the object already exists in the bucket by comparing the file to
   // the md5 hash.
   if (spinner) {
-    spinner = new Kia("Checking if file already exists in bucket...");
-    spinner.start();
+    spinner = ora("Checking if file already exists in bucket...").start();
   }
 
   let exists: boolean;
@@ -262,8 +258,7 @@ export async function pack(
     while (true) {
       // Upload the file.
       if (spinner) {
-        spinner = new Kia("Uploading file to bucket...");
-        spinner.start();
+        spinner = ora("Uploading file to bucket...").start();
       }
       try {
         const fileContent = await fs.readFile(absolutePackedFile);
@@ -289,8 +284,7 @@ export async function pack(
   }
 
   if (spinner) {
-    spinner = new Kia("Signing URL...");
-    spinner.start();
+    spinner = ora("Signing URL...").start();
   }
 
   // Get the URL to the uploaded file.

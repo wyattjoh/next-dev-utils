@@ -24,6 +24,14 @@
 
 - 0551395: Add node_modules to .gitignore for compatibility
 
+- ba64286: Refactor configuration and module structure
+
+  - Updated module exports to align with Deno standards
+  - Simplified configuration management by removing redundant class-based patterns
+  - Improved import/export structure for better tree-shaking
+  - Enhanced lefthook configuration for better pre-commit checks
+  - Optimized module dependencies and reduced overall bundle size
+
 ## 2.0.0
 
 ### Major Changes

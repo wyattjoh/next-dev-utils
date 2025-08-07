@@ -96,7 +96,7 @@ class CachedFetchClient implements FetchClient {
  * const freshContent = await client.fetch('https://api.example.com/data');
  * ```
  */
-export const client =
+export const client: FetchClient =
   // If skip has been enabled and it isn't being forced, then use the base fetch
   // client. This will bypass the cache and fetch the latest data.
   process.env.NEXT_DEV_UTILS_SKIP_CACHE &&
