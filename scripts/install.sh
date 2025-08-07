@@ -36,6 +36,9 @@ print_header "next-dev-utils installer"
 echo "================================"
 echo
 
+# Change to the home directory
+cd $HOME
+
 # Check if Deno is installed
 if ! command -v deno &> /dev/null; then
     print_error "Deno is not installed or not in PATH"
@@ -52,12 +55,12 @@ deno cache --reload jsr:@wyattjoh/next-dev-utils
 
 # Install with --force to overwrite existing installations
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'next-dev-utils'..."
-deno install --quiet --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n next-dev-utils jsr:@wyattjoh/next-dev-utils
+deno install --no-config --quiet --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n next-dev-utils jsr:@wyattjoh/next-dev-utils
 
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'nu'..."
 
 # NOTE: Reloading here isn't needed because it's already done above.
-deno install --quiet --global --force --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n nu jsr:@wyattjoh/next-dev-utils
+deno install --no-config --quiet --global --force --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n nu jsr:@wyattjoh/next-dev-utils
 
 # Check if Deno bin is in PATH
 DENO_INSTALL_ROOT="${DENO_INSTALL_ROOT:-$HOME/.deno}"
