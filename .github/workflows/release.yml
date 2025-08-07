@@ -10,8 +10,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required for Changesets
-      pull-requests: write # Required for Changesets
+      contents: read
       id-token: write # Required for OIDC authentication with JSR
 
     steps:

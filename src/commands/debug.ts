@@ -1,6 +1,6 @@
 import { existsSync, promises as fs } from "node:fs";
 import path from "node:path";
-import ora from "ora";
+import Kia from "kia/mod.ts";
 import { execa } from "execa";
 
 import { next } from "../lib/commands/next.ts";
@@ -8,7 +8,8 @@ import { node } from "../lib/commands/node.ts";
 import process from "node:process";
 
 async function removeDotNextDirectory(nextProjectPath: string) {
-  const spinner = ora("Removing existing .next directory").start();
+  const spinner = new Kia("Removing existing .next directory");
+  spinner.start();
   try {
     await fs.rm(path.join(nextProjectPath, ".next"), {
       recursive: true,

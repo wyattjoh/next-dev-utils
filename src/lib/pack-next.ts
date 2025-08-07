@@ -1,7 +1,7 @@
 import path from "node:path";
 import { promises as fs } from "node:fs";
 
-import ora, { type Ora } from "ora";
+import Kia from "kia/mod.ts";
 
 import { getConfig } from "./config/config.ts";
 import { pack, type PackOptions } from "./pack.ts";
@@ -84,11 +84,12 @@ export async function packNext(options: PackOptions = {}): Promise<string> {
   const pkg = JSON.parse(local);
   const { version } = pkg;
 
-  let spinner: Ora | undefined;
+  let spinner: Kia | undefined;
   if (options.progress) {
-    spinner = ora(
+    spinner = new Kia(
       `Getting optional dependencies for ${version} from npm...`,
-    ).start();
+    );
+    spinner.start();
   }
   try {
     const remote = await getPackageJSON(version);
@@ -133,7 +134,10 @@ export async function packNext(options: PackOptions = {}): Promise<string> {
   // Pack the package.
   const url = await pack({ ...options, cwd: next });
 
-  if (spinner) spinner = ora("Restoring package.json...").start();
+  if (spinner) {
+    spinner = new Kia("Restoring package.json...");
+    spinner.start();
+  }
   try {
     await fs.writeFile(pkgFilename, local, "utf8");
 

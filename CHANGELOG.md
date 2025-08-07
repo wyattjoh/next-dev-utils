@@ -1,5 +1,29 @@
 # next-dev-utils
 
+## 2.0.1
+
+### Patch Changes
+
+- 23b73d4: Refactor configuration management system
+
+  - Replace TypedConfig class with standalone getConfigKey/setConfigKey functions
+  - Switch from @jollytoad/store-deno-fs to Node.js fs module for config storage
+  - Change configuration storage from key-value store to JSON file (~/.next-dev-utils.json)
+  - Remove unused dependencies and simplify configuration management
+  - Maintain backward compatibility for existing getConfig/setConfig functions
+
+- 06ef9b0: Add CLAUDE.md documentation for Claude Code integration
+
+  - Add project-specific guidance for Claude Code
+  - Document project structure, commands, and patterns
+  - Improve AI-assisted development workflow
+
+- 777795e: Fix CI workflow for Deno environment
+
+- c9506f2: Update linter and formatter configuration for Deno
+
+- 0551395: Add node_modules to .gitignore for compatibility
+
 ## 2.0.0
 
 ### Major Changes

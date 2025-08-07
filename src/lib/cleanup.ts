@@ -1,4 +1,4 @@
-import ora, { type Ora } from "ora";
+import Kia from "kia/mod.ts";
 import { S3Client } from "@bradenmacdonald/s3-lite-client";
 
 import { getConfig } from "./config/config.ts";
@@ -43,9 +43,10 @@ export async function cleanup(options: CleanupOptions = {}) {
     region: "us-east-1", // Default region
   });
 
-  let spinner: Ora | undefined;
+  let spinner: Kia | undefined;
   if (!options.verbose) {
-    spinner = ora("Listing objects in bucket...").start();
+    spinner = new Kia("Listing objects in bucket...");
+    spinner.start();
   }
 
   const objectsToDelete: string[] = [];
@@ -94,9 +95,10 @@ export async function cleanup(options: CleanupOptions = {}) {
     }
 
     if (!options.verbose) {
-      spinner = ora(
+      spinner = new Kia(
         `Deleting ${objectsToDelete.length} old objects...`,
-      ).start();
+      );
+      spinner.start();
     }
 
     let deletedCount = 0;

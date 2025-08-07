@@ -1,13 +1,18 @@
 {
-  "$schema": "https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json",
   "name": "@wyattjoh/next-dev-utils",
-  "version": "2.0.1",
-  "license": "MIT",
+  "version": "2.1.0",
   "exports": {
-    ".": "./src/cli.ts"
+    ".": "./src/cli.ts",
+    "./lib": "./src/lib/index.ts"
   },
+  "$schema": "https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json",
+  "license": "MIT",
   "publish": {
-    "include": ["src/**/*.ts", "README.md", "LICENSE"]
+    "include": [
+      "src/**/*.ts",
+      "README.md",
+      "LICENSE"
+    ]
   },
   "tasks": {
     "build": "deno compile --allow-all --output=./next-dev-utils src/cli.ts"
@@ -21,11 +26,11 @@
     "execa": "npm:execa@^9.6.0",
     "find-cache-dir": "npm:find-cache-dir@^6.0.0",
     "lefthook": "npm:lefthook@^1.12.2",
-    "ora": "npm:ora@^8.2.0",
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
     "strip-indent": "npm:strip-indent@^4.0.0",
-    "inquirer": "npm:inquirer@^12.9.0"
+    "inquirer": "npm:inquirer@^12.9.0",
+    "kia/": "https://deno.land/x/kia@0.4.1/"
   },
   "compilerOptions": {
     "strict": true,
@@ -46,7 +51,9 @@
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"]
+      "tags": [
+        "recommended"
+      ]
     }
   }
 }
