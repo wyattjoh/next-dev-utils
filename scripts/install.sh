@@ -46,22 +46,18 @@ fi
 print_success "Found Deno $(deno --version | head -n1)"
 echo
 
+# Clear cache to ensure we get the latest version
+print_info "🧹 Clearing package cache to ensure latest version..."
+deno cache --reload jsr:@wyattjoh/next-dev-utils
+
 # Install with --force to overwrite existing installations
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'next-dev-utils'..."
-deno install --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n next-dev-utils jsr:@wyattjoh/next-dev-utils
+deno install --quiet --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n next-dev-utils jsr:@wyattjoh/next-dev-utils
 
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'nu'..."
 
 # NOTE: Reloading here isn't needed because it's already done above.
-deno install --global --force --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n nu jsr:@wyattjoh/next-dev-utils
-
-echo
-print_success "Installation complete!"
-echo
-print_info "Available commands:"
-echo "  next-dev-utils [args]"
-echo "  nu [args]"
-echo
+deno install --quiet --global --force --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n nu jsr:@wyattjoh/next-dev-utils
 
 # Check if Deno bin is in PATH
 DENO_INSTALL_ROOT="${DENO_INSTALL_ROOT:-$HOME/.deno}"
@@ -70,21 +66,32 @@ if [[ ":$PATH:" != *":$DENO_INSTALL_ROOT/bin:"* ]]; then
     print_info "Add this to your shell profile (.bashrc, .zshrc, etc.):"
     echo "  export PATH=\"\$PATH:$DENO_INSTALL_ROOT/bin\""
     echo
+
+    NEXT_DEV_UTILS_VERSION="unknown"
+    NU_VERSION="unknown"
+else
+    # Test installations
+    print_info "🔍 Verifying installations..."
+    if command -v next-dev-utils &> /dev/null; then
+        NEXT_DEV_UTILS_VERSION=$(next-dev-utils --version 2>/dev/null || echo "unknown")
+    else
+        print_warning "next-dev-utils not found in PATH"
+        NEXT_DEV_UTILS_VERSION="unknown"
+    fi
+
+    if command -v nu &> /dev/null; then
+        NU_VERSION=$(nu --version 2>/dev/null || echo "unknown")
+    else
+        print_warning "nu not found in PATH"
+        NU_VERSION="unknown"
+    fi
 fi
 
-# Test installations
-print_info "Verifying installations..."
-if command -v next-dev-utils &> /dev/null; then
-    print_success "next-dev-utils is available"
-else
-    print_warning "next-dev-utils not found in PATH"
-fi
-
-if command -v nu &> /dev/null; then
-    print_success "nu is available"
-else
-    print_warning "nu not found in PATH"
-fi
 
 echo
-print_success "Installation finished successfully!"
+print_success "Installation complete!"
+echo
+print_info "Available commands:"
+echo "  next-dev-utils (version: $NEXT_DEV_UTILS_VERSION)"
+echo "  nu (version: $NU_VERSION)"
+echo
