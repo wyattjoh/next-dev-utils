@@ -25,7 +25,6 @@
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
     "strip-indent": "npm:strip-indent@^4.0.0",
-    "inquirer": "npm:inquirer@^12.9.0",
     "ora": "npm:ora@^8.2.0"
   },
   "compilerOptions": {
