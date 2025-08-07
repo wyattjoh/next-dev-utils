@@ -48,10 +48,12 @@ echo
 
 # Install with --force to overwrite existing installations
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'next-dev-utils'..."
-deno install --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env -n next-dev-utils jsr:@wyattjoh/next-dev-utils
+deno install --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n next-dev-utils jsr:@wyattjoh/next-dev-utils
 
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'nu'..."
-deno install --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env -n nu jsr:@wyattjoh/next-dev-utils
+
+# NOTE: Reloading here isn't needed because it's already done above.
+deno install --global --force --allow-read --allow-write --allow-net --allow-run --allow-env --allow-sys -n nu jsr:@wyattjoh/next-dev-utils
 
 echo
 print_success "Installation complete!"
