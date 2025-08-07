@@ -31,11 +31,13 @@ await new Command()
   .option("--json", "Output as JSON")
   .option("--serve", "Serve the package")
   .option("--install", "Install dependencies")
+  .option("--progress", "Show progress")
   .action((options) => {
     return packNextCommand({
       json: options.json ?? false,
       serve: options.serve ?? false,
       install: options.install ?? false,
+      progress: options.progress ?? false,
     });
   })
   // pack command

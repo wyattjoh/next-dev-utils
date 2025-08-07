@@ -1,7 +1,6 @@
 import path from "node:path";
 import process from "node:process";
 import crypto from "node:crypto";
-import stream from "node:stream/promises";
 import { existsSync, promises as fs } from "node:fs";
 import os from "node:os";
 import http from "node:http";
@@ -130,10 +129,8 @@ export async function pack(
   let md5: string;
   try {
     const hash = crypto.createHash("md5");
-    const file = await fs.open(absolutePackedFile, "r");
-
-    await stream.pipeline(file.createReadStream(), hash);
-
+    const fileContent = await fs.readFile(absolutePackedFile);
+    hash.update(fileContent);
     md5 = hash.digest("hex");
   } catch (err) {
     console.error(err);

@@ -25,6 +25,7 @@ const schema = v.object({
   secret_key: v.optional(v.string()),
   vercel_test_team: v.optional(v.string()),
   vercel_test_token: v.optional(v.string()),
+  vercel_project_path: v.optional(v.string()),
 });
 
 /**
@@ -47,8 +48,16 @@ export type ConfigKey = keyof Config;
 const CONFIG_FILE_PATH = join(homedir(), ".next-dev-utils.json");
 
 async function loadConfig(): Promise<Config> {
-  const json = await fs.readFile(CONFIG_FILE_PATH, "utf-8");
-  return v.parse(schema, JSON.parse(json));
+  try {
+    const json = await fs.readFile(CONFIG_FILE_PATH, "utf-8");
+    return v.parse(schema, JSON.parse(json));
+  } catch (err) {
+    if (err instanceof Error && err.message.includes("ENOENT")) {
+      return {};
+    }
+
+    throw err;
+  }
 }
 
 async function saveConfig(config: Config): Promise<void> {

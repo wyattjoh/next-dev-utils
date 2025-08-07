@@ -7,6 +7,7 @@ type Options = {
   json: boolean;
   serve: boolean;
   install: boolean;
+  progress: boolean;
 };
 
 export async function packNextCommand(options: Options) {
@@ -26,7 +27,7 @@ export async function packNextCommand(options: Options) {
 
   const url = await packNextLib({
     ...options,
-    progress: options.json || options.install,
+    progress: options.json || options.install || options.progress,
     signal: controller?.signal,
   });
 
