@@ -1,6 +1,6 @@
 {
   "$schema": "https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json",
-  "name": "@next-dev-utils/cli",
+  "name": "@wyattjoh/next-dev-utils",
   "version": "2.0.0",
   "license": "MIT",
   "exports": {

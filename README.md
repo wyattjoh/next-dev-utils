@@ -13,7 +13,7 @@ curl -fsSL https://raw.githubusercontent.com/wyattjoh/next-dev-utils/refs/heads/
 ### Direct Deno Install
 
 ```bash
-deno install --global --force --allow-all --name nu jsr:@next-dev-utils/cli
+deno install --global --force --allow-all --name nu jsr:@wyattjoh/next-dev-utils
 ```
 
 ## Configuration
