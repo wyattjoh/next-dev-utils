@@ -5,9 +5,9 @@
 ### Major Changes
 
 - f461092: Migrate project from Node.js/pnpm to Deno
-  
+
   **BREAKING CHANGES**: This is a complete rewrite of the project using Deno instead of Node.js.
-  
+
   - Migrated from Node.js/pnpm monorepo structure to a single Deno module
   - Removed dependency on Node.js, pnpm, and turbo
   - Updated CI/CD workflows to use Deno for building and deployment
@@ -18,7 +18,7 @@
 ### Minor Changes
 
 - 0fdf461: Add lefthook for git hooks management
-  
+
   - Integrated lefthook for pre-commit and pre-push hooks
   - Automatically formats code with `deno fmt` before commits
   - Ensures code quality checks run before pushing
@@ -26,7 +26,7 @@
 ### Patch Changes
 
 - 227c851: Fix package name for JSR installation
-  
+
   - Corrected package name from `@wyattjoh/next-dev-utils` to `@next-dev-utils/cli` in documentation and configuration
 
 ## 1.3.0

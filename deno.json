@@ -39,7 +39,6 @@
     "exactOptionalPropertyTypes": true
   },
   "fmt": {
-    "include": ["src/", "README.md", "LICENSE"],
     "useTabs": false,
     "lineWidth": 80,
     "indentWidth": 2,
@@ -48,7 +47,6 @@
     "proseWrap": "preserve"
   },
   "lint": {
-    "include": ["src/", "README.md", "LICENSE"],
     "rules": {
       "tags": ["recommended"]
     }
