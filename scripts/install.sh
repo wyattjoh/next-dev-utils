@@ -46,10 +46,6 @@ fi
 print_success "Found Deno $(deno --version | head -n1)"
 echo
 
-# # Clear cache to ensure we get the latest version
-# print_info "Clearing package cache to ensure latest version..."
-# deno cache --reload jsr:@wyattjoh/next-dev-utils
-
 # Install with --force to overwrite existing installations
 print_info "📦 Installing @wyattjoh/next-dev-utils as 'next-dev-utils'..."
 deno install --global --force --reload --allow-read --allow-write --allow-net --allow-run --allow-env -n next-dev-utils jsr:@wyattjoh/next-dev-utils
