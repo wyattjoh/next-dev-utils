@@ -7,11 +7,11 @@ pre-commit:
   commands:
     format:
       run: deno fmt
-      glob: "**/*.{ts,json,md,yml}"
+      glob: "*.{ts,json,md,yml}"
       stage_fixed: true
     lint:
       run: deno lint
-      glob: "**/*.ts"
+      glob: "*.ts"
     check:
       run: deno check
-      glob: "**/*.ts"
+      glob: "*.ts"
