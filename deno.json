@@ -12,6 +12,7 @@
   "tasks": {
     "build": "deno compile --allow-all --output=./next-dev-utils src/cli.ts"
   },
+  "nodeModulesDir": "auto",
   "imports": {
     "@bradenmacdonald/s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.9.2",
     "@jollytoad/store": "jsr:@jollytoad/store@^0.4.0",
@@ -21,6 +22,7 @@
     "clipboardy": "npm:clipboardy@^4.0.0",
     "execa": "npm:execa@^9.6.0",
     "find-cache-dir": "npm:find-cache-dir@^6.0.0",
+    "lefthook": "npm:lefthook@^1.12.2",
     "ora": "npm:ora@^8.2.0",
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",

@@ -1,0 +1,17 @@
+# Lefthook configuration
+# https://github.com/evilmartians/lefthook
+
+# Pre-commit hook - runs before each commit
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      run: deno fmt
+      glob: "**/*.{ts,json,md,yml}"
+      stage_fixed: true
+    lint:
+      run: deno lint
+      glob: "**/*.ts"
+    check:
+      run: deno check
+      glob: "**/*.ts"
