@@ -1,12 +1,17 @@
 {
   "json.schemas": [
     {
-      "fileMatch": [".syncpackrc.json"],
-      "url": "https://unpkg.com/syncpack@11.2.1/dist/schema.json"
+      "fileMatch": ["deno.json"],
+      "url": "https://github.com/denoland/deno/blob/main/cli/schemas/config-file.v1.json"
     },
     {
-      "fileMatch": ["turbo.json"],
-      "url": "https://turbo.build/schema.json"
+      "fileMatch": [".changeset/config.json"],
+      "url": "https://unpkg.com/@changesets/config@3.0.3/schema.json"
     }
-  ]
+  ],
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "deno.enable": true,
+  "biome.enabled": false
 }

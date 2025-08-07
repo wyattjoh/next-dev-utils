@@ -1,0 +1,24 @@
+import clipboard from "clipboardy";
+
+import { pack as packLib } from "../lib/pack.ts";
+
+type Options = {
+  json: boolean;
+  serve: boolean;
+  progress: boolean;
+  verbose: boolean;
+};
+
+export async function packCommand(options: Options) {
+  if (options.json && options.serve) {
+    throw new Error("Cannot use --json and --serve together");
+  }
+
+  const url = await packLib({
+    ...options,
+    progress: options.json || options.progress,
+  });
+  await clipboard.write(url);
+  if (!options.json) console.log("\nCopied URL to clipboard 🦄");
+  if (options.json) console.log(url);
+}

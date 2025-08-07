@@ -1,253 +1,235 @@
-# next-dev-utils
+# Next Dev Utils
 
-A comprehensive CLI toolkit for Next.js development workflows, providing integrated tooling for building, testing, packaging, and debugging Next.js applications with cloud storage distribution capabilities.
+A powerful CLI toolkit for Next.js development, providing utilities for packaging, deploying, and debugging Next.js applications.
 
 ## Installation
 
-Install globally via npm to get the `nu` command:
+### Quick Install (Recommended)
 
 ```bash
-npm install -g @next-dev-utils/cli
+curl -fsSL https://raw.githubusercontent.com/wyattjoh/next-dev-utils/refs/heads/main/scripts/install.sh | bash
 ```
 
-This provides the `nu` binary globally, making it available from anywhere.
-
-## Quick Start
+### Direct Deno Install
 
 ```bash
-# Configure your environment (interactive prompts)
-nu config set next_project_path /path/to/nextjs/repo
-nu config set endpoint your-s3-endpoint.com
-
-# Build and develop
-nu make dev
-
-# Create a reproduction project
-nu create-reproduction issue-123
-
-# Pack and test deployment
-nu test-deploy test/e2e/my-feature.test.js
-```
-
-## Commands
-
-### Development Workflow
-
-#### `nu make [command...]`
-
-Orchestrates development workflows using pnpm and turbo with dependency management.
-
-**Available commands:**
-- `clean` - Clean build artifacts
-- `install` - Install dependencies
-- `build` - Build all packages
-- `dev` - Start development mode
-- `native` - Build native dependencies
-- `default` - Run default build sequence
-- `all` - Run all commands in sequence
-
-**Options:**
-- `--clean` - Clean before running commands
-- `--filter <pattern>` - Filter packages to build
-
-**Examples:**
-```bash
-nu make dev                    # Start development
-nu make clean build           # Clean and build
-nu make --filter=cli build    # Build only CLI package
-```
-
-#### `nu next <command> [directory]`
-
-Proxy for Next.js commands using your development build.
-
-**Examples:**
-```bash
-nu next dev                   # Start Next.js dev server
-nu next build ./my-app       # Build specific app
-nu next start ./my-app       # Start production server
-```
-
-#### `nu debug <mode> <directory>`
-
-Advanced debugging with automatic cleanup and concurrent script execution.
-
-**Modes:**
-- `dev` - Debug development server
-- `prod` - Debug production build
-- `build` - Debug build process
-- `start` - Debug production start
-- `standalone` - Debug standalone mode
-- `export` - Debug static export
-
-**Options:**
-- `--rm` - Remove .next directory after completion
-- `--run <script>` - Run concurrent script during debugging
-
-**Examples:**
-```bash
-nu debug dev ./my-app                           # Debug dev server
-nu debug prod ./my-app --run "curl localhost:3000"  # Debug with health check
-nu debug build ./my-app --rm                   # Debug build and cleanup
-```
-
-### Package Management
-
-#### `nu pack-next`
-
-Pack and distribute Next.js packages with cloud storage integration.
-
-**Options:**
-- `--json` - Output result as JSON
-- `--serve` - Serve package locally instead of uploading
-- `--install` - Install packed package locally
-
-**Examples:**
-```bash
-nu pack-next                  # Pack and upload (copies URL to clipboard)
-nu pack-next --serve         # Pack and serve locally
-nu pack-next --json         # Get JSON output with URLs
-```
-
-#### `nu pack`
-
-Generic package packing with integrity validation.
-
-**Options:**
-- `--json` - Output result as JSON
-- `--serve` - Serve package locally
-- `--progress` - Show detailed progress
-- `--verbose` - Verbose output
-
-**Examples:**
-```bash
-nu pack                      # Pack current package
-nu pack --serve --verbose   # Pack, serve locally with verbose output
-```
-
-#### `nu cleanup`
-
-Remove old packages from cloud storage to manage space efficiently.
-
-**Options:**
-- `--verbose` - Show detailed output including files being deleted
-- `--dry-run` - Preview what would be deleted without making changes
-
-**Description:**
-Automatically removes packages older than 1 day from the configured cloud storage bucket. This helps maintain storage hygiene by cleaning up temporary test packages and old deployments.
-
-**Examples:**
-```bash
-nu cleanup                   # Remove old packages (silent mode)
-nu cleanup --dry-run        # Preview what would be deleted
-nu cleanup --verbose        # Show detailed deletion progress
-```
-
-### Testing
-
-#### `nu test-deploy <test-file>`
-
-End-to-end deployment testing with custom Next.js builds.
-
-**Options:**
-- `--no-app-dir` - Disable app directory
-- `--skip-pack` - Skip Next.js packing step
-
-**Requirements:**
-- Test file must be in `test/e2e` directory
-- File must match pattern `*.test.{js,ts}`
-
-**Examples:**
-```bash
-nu test-deploy test/e2e/app-router.test.js     # Test specific feature
-nu test-deploy test/e2e/build.test.js --skip-pack  # Skip packing step
-```
-
-### Project Management
-
-#### `nu create-reproduction <name>`
-
-Create minimal Next.js reproduction projects for issue reporting.
-
-**Options:**
-- `--no-app-dir` - Create without app directory structure
-
-**Examples:**
-```bash
-nu create-reproduction issue-123              # Create reproduction project
-nu create-reproduction bug-fix --no-app-dir  # Create without app directory
-```
-
-### Configuration
-
-#### `nu config <operation> [key] [value]`
-
-Manage CLI configuration with secure credential handling.
-
-**Operations:**
-- `get` - Retrieve configuration value
-- `set` - Set configuration value
-
-**Available keys:**
-- `next_project_path` - Path to Next.js repository
-- `endpoint` - S3-compatible storage endpoint
-- `bucket` - Storage bucket name
-- `access_key` - Storage access key
-- `secret_key` - Storage secret key (hidden input)
-- `vercel_test_team` - Vercel team for testing
-- `vercel_test_token` - Vercel authentication token (hidden input)
-
-**Examples:**
-```bash
-nu config set next_project_path /path/to/nextjs      # Set Next.js path
-nu config set endpoint s3.amazonaws.com             # Set storage endpoint
-nu config get bucket                                # Get current bucket
-nu config set secret_key                           # Prompts for hidden input
+deno install --global --force --allow-all --name nu jsr:@next-dev-utils/cli
 ```
 
 ## Configuration
 
-The CLI maintains persistent configuration for seamless operation across different environments. All sensitive data like secret keys and tokens use hidden input prompts for security.
+Before using the CLI, you need to configure your cloud storage credentials. The tool uses S3-compatible storage for packaging and deployment.
 
-### Required Configuration
+### Configuration Management
 
-For full functionality, configure these essential settings:
+Use the `config` command to manage your settings:
 
 ```bash
-# Next.js repository path
-nu config set next_project_path /path/to/nextjs
+# Set a configuration value
+nu config set <key> <value>
 
-# Cloud storage (S3-compatible)
-nu config set endpoint your-storage-endpoint.com
-nu config set bucket your-bucket-name
-nu config set access_key your-access-key
-nu config set secret_key  # Will prompt securely
+# Get a configuration value
+nu config get <key>
 
-# Vercel testing (optional)
-nu config set vercel_test_team your-team
-nu config set vercel_test_token  # Will prompt securely
+# Delete a configuration value
+nu config delete <key>
+
+# List all configuration values
+nu config list
 ```
+
+## Commands
+
+### `nu test-deploy`
+
+Deploy a test file for verification.
+
+```bash
+nu test-deploy <test-file>
+```
+
+**Arguments:**
+
+- `test-file` (required): Path to the test file to deploy
+
+### `nu pack-next`
+
+Package and upload your Next.js application to cloud storage.
+
+```bash
+nu pack-next [options]
+```
+
+**Options:**
+
+- `--json`: Output result as JSON
+- `--serve`: Serve the package after uploading
+- `--install`: Install dependencies before packing
+
+### `nu pack`
+
+Package and upload the current project to cloud storage.
+
+```bash
+nu pack [options]
+```
+
+**Options:**
+
+- `--json`: Output result as JSON
+- `--serve`: Serve the package after uploading
+- `--progress`: Show upload progress
+- `--verbose`: Enable verbose output
+
+### `nu debug`
+
+Debug utilities for Next.js applications.
+
+```bash
+nu debug [options]
+```
+
+**Options:**
+
+- `--stack`: Show stack trace information
+- `-d, --directory <path>`: Specify directory to debug (default: current directory)
+- `--skip-pnpm-install`: Skip pnpm installation
+- `--skip-git-clean`: Skip git clean operation
+- `--skip-git-bisect`: Skip git bisect
+- `--skip-test`: Skip test execution
+
+### `nu create-reproduction`
+
+Create a minimal reproduction for bug reports.
+
+```bash
+nu create-reproduction [options]
+```
+
+**Options:**
+
+- `--template <name>`: Specify template to use
+- `--output <path>`: Output directory for reproduction
+
+### `nu cleanup`
+
+Clean up stored packages from cloud storage.
+
+```bash
+nu cleanup [options]
+```
+
+**Options:**
+
+- `--days <number>`: Delete packages older than specified days
+- `--dry-run`: Preview what would be deleted without actually deleting
+
+### `nu next`
+
+Execute Next.js specific commands.
+
+```bash
+nu next <command> [...args]
+```
+
+**Arguments:**
+
+- `command`: Next.js command to execute (dev, build, start, etc.)
+- `args`: Additional arguments to pass to Next.js
+
+### `nu config`
+
+Manage CLI configuration.
+
+```bash
+nu config <action> [key] [value]
+```
+
+**Actions:**
+
+- `set <key> <value>`: Set a configuration value
+- `get <key>`: Get a configuration value
+- `delete <key>`: Delete a configuration value
+- `list`: List all configuration values
 
 ## Features
 
-- **🔧 Development Workflow**: Integrated pnpm/turbo build orchestration
-- **📦 Package Distribution**: S3-compatible cloud storage with URL sharing
-- **🧪 E2E Testing**: Automated deployment testing with Vercel integration
-- **🐛 Advanced Debugging**: Multiple debug modes with cleanup and concurrent execution
-- **🔒 Secure Configuration**: Hidden input for sensitive credentials
-- **📋 Clipboard Integration**: Automatic URL copying for easy sharing
-- **🎯 Interactive Experience**: Spinners, progress indicators, and intuitive prompts
-- **🧹 Automatic Cleanup**: Proper signal handling and resource management
-
-## Architecture
-
-This is a monorepo using pnpm workspaces and Turbo for build orchestration:
-
-- **`@next-dev-utils/cli`** - Main CLI application with command implementations
-- **`@next-dev-utils/utils`** - Shared utilities for configuration, command execution, and environment management
+- **Cloud Storage Integration**: Seamlessly upload and manage packages in S3-compatible storage
+- **Next.js Optimization**: Specialized tools for Next.js development workflow
+- **Debugging Tools**: Advanced debugging utilities including git bisect integration
+- **Reproduction Creation**: Quickly create minimal reproductions for bug reports
+- **Configuration Management**: Flexible configuration system with environment variable support
+- **Progress Tracking**: Real-time progress indicators for long-running operations
 
 ## Requirements
 
-- **Node.js**: 20+
-- **Package Manager**: pnpm (for development workflows)
-- **Optional**: Vercel account (for deployment testing)
+- Deno 2.4.3 or higher
+- S3-compatible storage account (AWS S3, MinIO, etc.)
+- git (for debug and reproduction features)
+- Next.js project (for Next.js specific commands)
+
+## Examples
+
+### Package and Deploy a Next.js App
+
+```bash
+# Configure your S3 credentials
+nu config set S3_ENDPOINT s3.amazonaws.com
+nu config set S3_BUCKET my-deployments
+
+# Package and upload Next.js app
+nu pack-next --install --json
+
+# Deploy a specific test
+nu test-deploy ./tests/integration.test.js
+```
+
+### Debug a Next.js Issue
+
+```bash
+# Run comprehensive debugging
+nu debug --directory ./my-next-app
+
+# Create a minimal reproduction
+nu create-reproduction --template app-router --output ./reproduction
+```
+
+### Manage Cloud Storage
+
+```bash
+# Clean up old packages (dry run)
+nu cleanup --days 30 --dry-run
+
+# Actually delete old packages
+nu cleanup --days 30
+```
+
+## Development
+
+To contribute or modify the CLI:
+
+```bash
+# Clone the repository
+git clone https://github.com/username/next-dev-utils.git
+cd next-dev-utils
+
+# Run in development
+deno run --allow-all src/cli.ts
+
+# Build standalone executable
+deno task build
+
+# Run tests
+deno test
+
+# Format code
+deno fmt
+
+# Lint code
+deno lint
+```
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
