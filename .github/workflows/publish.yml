@@ -1,0 +1,43 @@
+name: Publish to JSR and Homebrew
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for OIDC authentication with JSR
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Check formatting
+        run: deno fmt --check
+
+      - name: Lint code
+        run: deno lint
+
+      - name: Type check
+        run: deno check
+
+      - name: Publish packages to JSR
+        run: deno publish
+
+      - name: Update Homebrew formula
+        uses: wyattjoh/homebrew-bump-revision@v1
+        with:
+          tap: wyattjoh/homebrew-stable
+          formula: next-dev-utils
+          github-token: ${{ secrets.HOMEBREW_GITHUB_TOKEN }}
+          git-user-name: Wyatt Johnson
+          git-user-email: me@wyattjoh.ca

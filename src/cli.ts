@@ -1,4 +1,5 @@
 import { Command } from "@cliffy/command";
+import { CompletionsCommand } from "@cliffy/command/completions";
 import "@std/dotenv/load";
 
 import { configCommand } from "./commands/config.ts";
@@ -17,6 +18,8 @@ await new Command()
   .name("next-dev-utils")
   .version(deno.version)
   .description("Next.js development utilities")
+  // completions command
+  .command("completions", new CompletionsCommand())
   // test-deploy command
   .command("test-deploy <test-file:string>")
   .description("performs a pack and test deploy of the specified test")

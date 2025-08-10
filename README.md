@@ -7,7 +7,7 @@ A powerful CLI toolkit for Next.js development, providing utilities for packagin
 ### Quick Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/wyattjoh/next-dev-utils/refs/heads/main/scripts/install.sh | bash
+brew install wyattjoh/stable/next-dev-utils
 ```
 
 ### Updating

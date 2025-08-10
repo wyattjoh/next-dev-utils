@@ -21,7 +21,6 @@
     "npm:clipboardy@4": "4.0.0",
     "npm:execa@^9.6.0": "9.6.0",
     "npm:find-cache-directory@6": "6.0.0",
-    "npm:lefthook@^1.12.2": "1.12.2",
     "npm:ora@^8.2.0": "8.2.0",
     "npm:strip-indent@4": "4.0.0"
   },
@@ -197,8 +196,8 @@
         "pkg-dir"
       ]
     },
-    "find-up-simple@1.0.0": {
-      "integrity": "sha512-q7Us7kcjj2VMePAa02hDAF6d+MzsdsAWEwYyOpwUtlerRBkOEPBCRZrAV4XfcSN8fHAgaD0hP7miwoay6DCprw=="
+    "find-up-simple@1.0.1": {
+      "integrity": "sha512-afd4O7zpqHeRyg4PfDQsXmlDe2PfdHtJt6Akt8jOWaApLOZk5JXs6VMR29lz03pRe9mpykrRCYIYxaJYcfpncQ=="
     },
     "get-east-asian-width@1.3.0": {
       "integrity": "sha512-vpeMIQKxczTD/0s2CdEWHcb0eeJe6TFjxb+J5xgX7hScxqrGuyjmv4c1D4A/gelKfyox0gJJwIHF+fLjeaM8kQ=="
@@ -262,73 +261,6 @@
     },
     "isexe@2.0.0": {
       "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw=="
-    },
-    "lefthook-darwin-arm64@1.12.2": {
-      "integrity": "sha512-fTxeI9tEskrHjc3QyEO+AG7impBXY2Ed8V5aiRc3fw9POfYtVh9b5jRx90fjk2+ld5hf+Z1DsyyLq/vOHDFskQ==",
-      "os": ["darwin"],
-      "cpu": ["arm64"]
-    },
-    "lefthook-darwin-x64@1.12.2": {
-      "integrity": "sha512-T1dCDKAAfdHgYZ8qtrS02SJSHoR52RFcrGArFNll9Mu4ZSV19Sp8BO+kTwDUOcLYdcPGNaqOp9PkRBQGZWQC7g==",
-      "os": ["darwin"],
-      "cpu": ["x64"]
-    },
-    "lefthook-freebsd-arm64@1.12.2": {
-      "integrity": "sha512-2n9z7Q4BKeMBoB9cuEdv0UBQH82Z4GgBQpCrfjCtyzpDnYQwrH8Tkrlnlko4qPh9MM6nLLGIYMKsA5nltzo8Cg==",
-      "os": ["freebsd"],
-      "cpu": ["arm64"]
-    },
-    "lefthook-freebsd-x64@1.12.2": {
-      "integrity": "sha512-1hNY/irY+/3kjRzKoJYxG+m3BYI8QxopJUK1PQnknGo1Wy5u302SdX+tR7pnpz6JM5chrNw4ozSbKKOvdZ5VEw==",
-      "os": ["freebsd"],
-      "cpu": ["x64"]
-    },
-    "lefthook-linux-arm64@1.12.2": {
-      "integrity": "sha512-1W4swYIVRkxq/LFTuuK4oVpd6NtTKY4E3VY2Uq2JDkIOJV46+8qGBF+C/QA9K3O9chLffgN7c+i+NhIuGiZ/Vw==",
-      "os": ["linux"],
-      "cpu": ["arm64"]
-    },
-    "lefthook-linux-x64@1.12.2": {
-      "integrity": "sha512-J6VGuMfhq5iCsg1Pv7xULbuXC63gP5LaikT0PhkyBNMi3HQneZFDJ8k/sp0Ue9HkQv6QfWIo3/FgB9gz38MCFw==",
-      "os": ["linux"],
-      "cpu": ["x64"]
-    },
-    "lefthook-openbsd-arm64@1.12.2": {
-      "integrity": "sha512-wncDRW3ml24DaOyH22KINumjvCohswbQqbxyH2GORRCykSnE859cTjOrRIchTKBIARF7PSeGPUtS7EK0+oDbaw==",
-      "os": ["openbsd"],
-      "cpu": ["arm64"]
-    },
-    "lefthook-openbsd-x64@1.12.2": {
-      "integrity": "sha512-2jDOkCHNnc/oK/vR62hAf3vZb1EQ6Md2GjIlgZ/V7A3ztOsM8QZ5IxwYN3D1UOIR5ZnwMBy7PtmTJC/HJrig5w==",
-      "os": ["openbsd"],
-      "cpu": ["x64"]
-    },
-    "lefthook-windows-arm64@1.12.2": {
-      "integrity": "sha512-ZMH/q6UNSidhHEG/1QoqIl1n4yPTBWuVmKx5bONtKHicoz4QCQ+QEiNjKsG5OO4C62nfyHGThmweCzZVUQECJw==",
-      "os": ["win32"],
-      "cpu": ["arm64"]
-    },
-    "lefthook-windows-x64@1.12.2": {
-      "integrity": "sha512-TqT2jIPcTQ9uwaw+v+DTmvnUHM/p7bbsSrPoPX+fRXSGLzFjyiY+12C9dObSwfCQq6rT70xqQJ9AmftJQsa5/Q==",
-      "os": ["win32"],
-      "cpu": ["x64"]
-    },
-    "lefthook@1.12.2": {
-      "integrity": "sha512-2CeTu5NcmoT9YnqsHTq/TF36MlqlzHzhivGx3DrXHwcff4TdvrkIwUTA56huM3Nlo5ODAF/0hlPzaKLmNHCBnQ==",
-      "optionalDependencies": [
-        "lefthook-darwin-arm64",
-        "lefthook-darwin-x64",
-        "lefthook-freebsd-arm64",
-        "lefthook-freebsd-x64",
-        "lefthook-linux-arm64",
-        "lefthook-linux-x64",
-        "lefthook-openbsd-arm64",
-        "lefthook-openbsd-x64",
-        "lefthook-windows-arm64",
-        "lefthook-windows-x64"
-      ],
-      "scripts": true,
-      "bin": true
     },
     "log-symbols@6.0.0": {
       "integrity": "sha512-i24m8rpwhmPIS4zscNzK6MSEhk0DUWa/8iYQWxhffV8jkI4Phvs3F+quL5xvS0gdQR0FyTCMMH33Y78dDTzzIw==",
@@ -477,29 +409,6 @@
       "integrity": "sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ=="
     }
   },
-  "remote": {
-    "https://deno.land/std@0.122.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
-    "https://deno.land/std@0.122.0/bytes/bytes_list.ts": "3bff6a09c72b2e0b1e92e29bd3b135053894196cca07a2bba842901073efe5cb",
-    "https://deno.land/std@0.122.0/bytes/equals.ts": "69f55fdbd45c71f920c1a621e6c0865dc780cd8ae34e0f5e55a9497b70c31c1b",
-    "https://deno.land/std@0.122.0/bytes/mod.ts": "fedb80b8da2e7ad8dd251148e65f92a04c73d6c5a430b7d197dc39588c8dda6f",
-    "https://deno.land/std@0.122.0/fmt/colors.ts": "8368ddf2d48dfe413ffd04cdbb7ae6a1009cf0dccc9c7ff1d76259d9c61a0621",
-    "https://deno.land/std@0.122.0/io/buffer.ts": "8f10342821b81990acf859cdccb4e4031c7c9187a0ffc3ed6b356ee29ecc6681",
-    "https://deno.land/std@0.122.0/streams/conversion.ts": "7ff9af42540063fa72003ab31a377ba9dde8532d43b16329b933c37a6d7aac5f",
-    "https://deno.land/std@0.122.0/testing/_diff.ts": "e6a10d2aca8d6c27a9c5b8a2dbbf64353874730af539707b5b39d4128140642d",
-    "https://deno.land/std@0.122.0/testing/asserts.ts": "e1e7325b449cc9c747c309690b22d8cf464e401f79f494ddb106e4842fdb4dda",
-    "https://deno.land/std@0.97.0/fmt/colors.ts": "db22b314a2ae9430ae7460ce005e0a7130e23ae1c999157e3bb77cf55800f7e4",
-    "https://deno.land/std@0.97.0/testing/_diff.ts": "961eaf6d9f5b0a8556c9d835bbc6fa74f5addd7d3b02728ba7936ff93364f7a3",
-    "https://deno.land/std@0.97.0/testing/asserts.ts": "341292d12eebc44be4c3c2ca101ba8b6b5859cef2fa69d50c217f9d0bfbcfd1f",
-    "https://deno.land/x/expect@v0.2.9/expect.ts": "128c60f94ff3f977e2a649463238e403f9bdb8e6ab77e65214c0236bd61b0111",
-    "https://deno.land/x/expect@v0.2.9/matchers.ts": "ba7360b73c5031a22449fa98eb4d5dbe7f256a88dd4c22ccae96dc6c01f0b19c",
-    "https://deno.land/x/expect@v0.2.9/mock.ts": "562d4b1d735d15b0b8e935f342679096b64fe452f86e96714fe8616c0c884914",
-    "https://deno.land/x/expect@v0.2.9/mod.ts": "0304d2430e1e96ba669a8495e24ba606dcc3d152e1f81aaa8da898cea24e36c2",
-    "https://deno.land/x/kia@0.4.1/deps.ts": "75da73e1fd9f18b9abbc0e615894aef9cafd8bcf81c5c6aab3be5986425474c4",
-    "https://deno.land/x/kia@0.4.1/kia.ts": "9eaaae34b1179a43251f4ced6b4b94b9d8100e587a95b8152f01b22fe52cbe84",
-    "https://deno.land/x/kia@0.4.1/mod.ts": "727b60e707c46429e40a2159ab73381245ef08a8e1e59e1e5a705745b99f4aec",
-    "https://deno.land/x/kia@0.4.1/spinners.ts": "26b63f964c745d6cc46e547d98352a4f64ae6d28400d35d9b77be7a5141db860",
-    "https://deno.land/x/kia@0.4.1/util.ts": "b7ac0962b5a39f666bad41c8b93efe1ea599fbac05ea9f65c0409926e8092618"
-  },
   "workspace": {
     "dependencies": [
       "jsr:@bradenmacdonald/s3-lite-client@~0.9.2",
@@ -510,7 +419,6 @@
       "npm:clipboardy@4",
       "npm:execa@^9.6.0",
       "npm:find-cache-directory@6",
-      "npm:lefthook@^1.12.2",
       "npm:ora@^8.2.0",
       "npm:strip-indent@4"
     ]

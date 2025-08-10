@@ -1,6 +1,6 @@
 {
   "name": "@wyattjoh/next-dev-utils",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "exports": {
     ".": "./src/cli.ts",
     "./lib": "./src/lib/index.ts"
@@ -11,9 +11,11 @@
     "include": ["src/**/*.ts", "README.md", "LICENSE"]
   },
   "tasks": {
-    "build": "deno compile --allow-all --output=./next-dev-utils src/cli.ts"
+    "build": "deno compile --allow-all --output=./nu src/cli.ts",
+    "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
+    "hooks:pre-commit": "deno check && deno fmt --check && deno lint",
+    "hooks:pre-push": "deno publish --dry-run --allow-dirty"
   },
-  "nodeModulesDir": "auto",
   "imports": {
     "@bradenmacdonald/s3-lite-client": "jsr:@bradenmacdonald/s3-lite-client@^0.9.2",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
@@ -21,7 +23,6 @@
     "clipboardy": "npm:clipboardy@^4.0.0",
     "execa": "npm:execa@^9.6.0",
     "find-cache-directory": "npm:find-cache-directory@^6.0.0",
-    "lefthook": "npm:lefthook@^1.12.2",
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
     "@cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.8",
     "strip-indent": "npm:strip-indent@^4.0.0",

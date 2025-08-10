@@ -1,27 +1,24 @@
-name: Release
+name: Test
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  release:
-    name: Release
+  publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # Required for OIDC authentication with JSR
-
     steps:
-      - name: Checkout Repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-          cache: true
 
       - name: Check formatting
         run: deno fmt --check
@@ -31,6 +28,3 @@ jobs:
 
       - name: Type check
         run: deno check
-
-      - name: Publish to JSR
-        run: deno publish
