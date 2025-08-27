@@ -71,20 +71,27 @@ await new Command()
   })
   // config command
   .command("config <operation:string> [key:string] [value:string]")
-  .description("update or get a config value")
-  .action((_, operation, key, value) => {
+  .description("manage configuration values (get, set, convert)")
+  .option(
+    "--1password",
+    "Force value to be stored as 1Password reference (requires op:// prefix)",
+  )
+  .option("--raw", "Show raw stored format (for get operation)")
+  .action((options, operation, key, value) => {
     // Validate operation
-    if (operation !== "get" && operation !== "set") {
-      throw new Error("Operation must be 'get' or 'set'");
+    if (operation !== "get" && operation !== "set" && operation !== "convert") {
+      throw new Error("Operation must be 'get', 'set', or 'convert'");
     }
     // Validate key if provided
     if (key && !ConfigKeys.includes(key)) {
       throw new Error(`Invalid key. Must be one of: ${ConfigKeys.join(", ")}`);
     }
     return configCommand({
-      operation: operation as "get" | "set",
+      operation: operation as "get" | "set" | "convert",
       key: key as ConfigKey,
       value,
+      onePassword: options["1password"],
+      raw: options.raw,
     });
   })
   // create-reproduction command
