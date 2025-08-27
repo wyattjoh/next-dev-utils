@@ -11,6 +11,7 @@ import { testDeployCommand } from "./commands/test-deploy.ts";
 import { cleanupCommand } from "./commands/cleanup.ts";
 import { nextCommand } from "./commands/next.ts";
 import { ConfigKey, ConfigKeys } from "./lib/config/config.ts";
+import { testAllDeployCommand } from "./commands/test-all-deploy.ts";
 
 import deno from "../deno.json" with { type: "json" };
 
@@ -26,6 +27,23 @@ await new Command()
   .action((_, testFile) => {
     return testDeployCommand({
       "test-file": testFile,
+    });
+  })
+  // test-all-deploy command
+  .command("test-all-deploy")
+  .description(
+    "performs a pack and test deploy of the current branch against all deployment tests",
+  )
+  .option("--proxy <proxy:string>", "Proxy address to use")
+  .option(
+    "--vercel-cli-version <vercel-cli-version:string>",
+    "Vercel CLI version to use",
+    { default: "vercel@latest" },
+  )
+  .action((options) => {
+    return testAllDeployCommand({
+      proxy: options.proxy,
+      vercelCliVersion: options.vercelCliVersion,
     });
   })
   // pack-next command

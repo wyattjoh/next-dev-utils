@@ -3,9 +3,9 @@ import { promises as fs } from "node:fs";
 
 import ora from "ora";
 
-import { getConfig } from "./config/config.ts";
 import { pack, type PackOptions } from "./pack.ts";
 import process from "node:process";
+import { getNextProjectPath } from "./get-next-project-path.ts";
 
 async function getPackageJSON(version: string) {
   let json: string;
@@ -47,6 +47,17 @@ async function getPackageJSON(version: string) {
 }
 
 /**
+ * Options for the `packNext` function.
+ */
+type PackNextOptions = PackOptions & {
+  /**
+   * The path to the Next.js project. If not provided, the function will
+   * automatically determine the path to the Next.js project.
+   */
+  nextProjectPath?: string | undefined;
+};
+
+/**
  * Packs the Next.js package with proper optional dependencies and uploads it to S3.
  *
  * This function:
@@ -60,6 +71,7 @@ async function getPackageJSON(version: string) {
  * @param options.progress - Show progress indicators during packing.
  * @param options.verbose - Enable verbose output.
  * @param options.dryRun - Perform a dry run without uploading.
+ * @param options.nextProjectPath - The path to the Next.js project.
  *
  * @returns The URL of the uploaded Next.js package tarball.
  *
@@ -73,9 +85,9 @@ async function getPackageJSON(version: string) {
  * await packNext({ dryRun: true, verbose: true });
  * ```
  */
-export async function packNext(options: PackOptions = {}): Promise<string> {
-  const nextProjectPath: string = process.env.NEXT_PROJECT_PATH ??
-    (await getConfig("next_project_path"));
+export async function packNext(options: PackNextOptions = {}): Promise<string> {
+  const nextProjectPath: string = options.nextProjectPath ??
+    await getNextProjectPath();
   const next = path.join(nextProjectPath, "packages", "next");
 
   // Get the current package.json.

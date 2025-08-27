@@ -285,7 +285,7 @@ export async function pack(
   }
 
   // Get the URL to the uploaded file.
-  const url = client.getPresignedUrl(
+  const url = await client.getPresignedUrl(
     "GET",
     packedFile,
     { expirySeconds: 60 * 60 * 24 }, // 1 day in seconds
