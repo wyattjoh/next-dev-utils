@@ -3,14 +3,14 @@ import process from "node:process";
 import { execa } from "execa";
 import { getConfig } from "./config/config.ts";
 
-async function getGitWorktrees() {
+async function getGitWorktrees(cwd: string) {
   // List the worktrees for the current git repository in the format:
   // /Users/wyatt.johnson/Code/github.com/vercel/next.js                                               c6cefce4cb [canary]
   // /Users/wyatt.johnson/Code/github.com/vercel/next.js-refactor/playwright-instance-based-lifecycle  8732d86d72 [refactor/playwright-instance-based-lifecycle]
   // /Users/wyatt.johnson/Code/github.com/vercel/next.js-test/deprecate-check                          4744f8bb42 [test/deprecate-check]
   // /Users/wyatt.johnson/Code/github.com/vercel/next.js-wyattjoh/rdc-for-rsc-redo                     c85ffe612c [wyattjoh/rdc-for-rsc-redo]
   // /Users/wyatt.johnson/Code/github.com/vercel/next.js-wyattjoh/refactor-ppr-to-cache-components     380ca6aaa1 [wyattjoh/refactor-ppr-to-cache-components]
-  const worktrees = await execa("git", ["worktree", "list"]);
+  const worktrees = await execa("git", ["worktree", "list"], { cwd });
   return worktrees.stdout.split("\n").map((line) => {
     const [path, commit, branch] = line.split(/\s+/);
     return {
@@ -53,7 +53,7 @@ export async function getNextProjectPath(): Promise<string> {
     process.env.NEXT_PROJECT_PATH ?? (await getConfig("next_project_path"));
 
   // If the base path is a git worktree, use the worktree's path.
-  const worktrees = await getGitWorktrees();
+  const worktrees = await getGitWorktrees(base);
   for (const worktree of worktrees) {
     if (worktree.path.startsWith(process.cwd())) {
       console.log(
