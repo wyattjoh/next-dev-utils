@@ -22,11 +22,13 @@ await new Command()
   // completions command
   .command("completions", new CompletionsCommand())
   // test-deploy command
-  .command("test-deploy <test-file:string>")
-  .description("performs a pack and test deploy of the specified test")
-  .action((_, testFile) => {
+  .command("test-deploy <test-file...:string>")
+  .option("--hashed", "Include hash in filename for the Next.js package")
+  .description("performs a pack and test deploy of the specified test(s)")
+  .action((options, ...testFiles) => {
     return testDeployCommand({
-      "test-file": testFile,
+      "test-file": testFiles,
+      hashed: options.hashed ?? false,
     });
   })
   // test-all-deploy command
@@ -40,10 +42,12 @@ await new Command()
     "Vercel CLI version to use",
     { default: "vercel@latest" },
   )
+  .option("--hashed", "Include hash in filename for the Next.js package")
   .action((options) => {
     return testAllDeployCommand({
       proxy: options.proxy,
       vercelCliVersion: options.vercelCliVersion,
+      hashed: options.hashed ?? false,
     });
   })
   // pack-next command
@@ -53,12 +57,14 @@ await new Command()
   .option("--serve", "Serve the package")
   .option("--install", "Install dependencies")
   .option("--progress", "Show progress")
+  .option("--hashed", "Include hash in filename")
   .action((options) => {
     return packNextCommand({
       json: options.json ?? false,
       serve: options.serve ?? false,
       install: options.install ?? false,
       progress: options.progress ?? false,
+      hashed: options.hashed ?? false,
     });
   })
   // pack command
@@ -68,12 +74,14 @@ await new Command()
   .option("--serve", "Serve the package")
   .option("--progress", "Show progress")
   .option("--verbose", "Verbose output")
+  .option("--hashed", "Include hash in filename")
   .action((options) => {
     return packCommand({
       json: options.json ?? false,
       serve: options.serve ?? false,
       progress: options.progress ?? false,
       verbose: options.verbose ?? false,
+      hashed: options.hashed ?? false,
     });
   })
   // cleanup command

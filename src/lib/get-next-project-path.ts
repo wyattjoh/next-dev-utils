@@ -2,6 +2,7 @@ import process from "node:process";
 
 import { execa } from "execa";
 import { getConfig } from "./config/config.ts";
+import logger from "./logger.ts";
 
 async function getGitWorktrees(cwd: string) {
   // List the worktrees for the current git repository in the format:
@@ -56,7 +57,7 @@ export async function getNextProjectPath(): Promise<string> {
   const worktrees = await getGitWorktrees(base);
   for (const worktree of worktrees) {
     if (worktree.path.startsWith(process.cwd())) {
-      console.log(
+      logger.info(
         `Using worktree ${worktree.path} for ${worktree.branch} at ${worktree.commit}`,
       );
       return worktree.path;
@@ -64,6 +65,9 @@ export async function getNextProjectPath(): Promise<string> {
   }
 
   // If the base path is not a git worktree, use the base path.
-  console.log(`Using base path ${base} as we weren't in a git worktree`);
+  const isPiped = !Deno.stdout.isTerminal();
+  if (!isPiped) {
+    logger.info(`Using base path ${base} as we weren't in a git worktree`);
+  }
   return base;
 }

@@ -12,6 +12,7 @@ import { homedir } from "node:os";
 import { execa } from "execa";
 
 import { exists } from "./validators/exists.ts";
+import logger from "../logger.ts";
 
 /**
  * 1Password reference object type.
@@ -203,7 +204,7 @@ export async function getConfig<K extends ConfigKey>(
     try {
       value = await resolveOnePasswordSecret(value.reference);
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to resolve 1Password secret for ${key}: ${
           (error as Error).message
         }`,
@@ -223,7 +224,7 @@ export async function getConfig<K extends ConfigKey>(
           >
         )[key](value);
       } catch (err) {
-        console.error((err as Error).message);
+        logger.error((err as Error).message);
         value = undefined;
       }
     }
@@ -233,7 +234,7 @@ export async function getConfig<K extends ConfigKey>(
     }
   }
 
-  console.log(`${key} is missing from config, please enter it now:`);
+  logger.info(`${key} is missing from config, please enter it now:`);
 
   // For secret keys, ask if user wants to use 1Password
   if (secrets.includes(key)) {
@@ -261,10 +262,10 @@ export async function getConfig<K extends ConfigKey>(
       try {
         return await resolveOnePasswordSecret(reference);
       } catch (error) {
-        console.error(
+        logger.error(
           `Failed to resolve 1Password reference: ${(error as Error).message}`,
         );
-        console.error(
+        logger.error(
           "You can update this reference later using: config convert " + key,
         );
         return reference; // Return the reference string as fallback

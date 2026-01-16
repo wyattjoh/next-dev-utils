@@ -4,10 +4,12 @@ import process from "node:process";
 
 import { getNextProjectPath } from "../lib/get-next-project-path.ts";
 import { packNext as packNextLib } from "../lib/pack-next.ts";
+import logger from "../lib/logger.ts";
 
 type Options = {
   proxy?: string | undefined;
   vercelCliVersion: string;
+  hashed: boolean;
 };
 
 export async function testAllDeployCommand(options: Options) {
@@ -21,6 +23,7 @@ export async function testAllDeployCommand(options: Options) {
   const nextVersion = await packNextLib({
     progress: true,
     nextProjectPath,
+    hashed: options.hashed,
   });
 
   const args: string[] = [
@@ -50,7 +53,7 @@ export async function testAllDeployCommand(options: Options) {
 
     spinner.succeed("Test deploy dispatched!");
   } catch (err) {
-    console.error(err);
+    logger.error(String(err));
     spinner.fail("Failed to dispatch test deploy");
     process.exit(1);
   } finally {

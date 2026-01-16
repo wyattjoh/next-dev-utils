@@ -1,12 +1,14 @@
 import clipboard from "clipboardy";
 
 import { pack as packLib } from "../lib/pack.ts";
+import logger from "../lib/logger.ts";
 
 type Options = {
   json: boolean;
   serve: boolean;
   progress: boolean;
   verbose: boolean;
+  hashed: boolean;
 };
 
 export async function packCommand(options: Options) {
@@ -19,6 +21,6 @@ export async function packCommand(options: Options) {
     progress: options.json || options.progress,
   });
   await clipboard.write(url);
-  if (!options.json) console.log("\nCopied URL to clipboard 🦄");
-  if (options.json) console.log(url);
+  if (!options.json) logger.info("\nCopied URL to clipboard 🦄");
+  if (options.json) logger.info(url);
 }

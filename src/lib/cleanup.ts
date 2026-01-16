@@ -2,6 +2,7 @@ import ora from "ora";
 import { S3Client } from "@bradenmacdonald/s3-lite-client";
 
 import { getConfig } from "./config/config.ts";
+import logger from "./logger.ts";
 
 /**
  * Options for the cleanup operation.
@@ -59,7 +60,7 @@ export async function cleanup(options: CleanupOptions = {}) {
         if (lastModified < oneDayAgo && obj.key) {
           objectsToDelete.push(obj.key);
           if (options.verbose) {
-            console.log(
+            logger.info(
               `Found old object: ${obj.key} (modified: ${lastModified.toISOString()})`,
             );
           }
@@ -72,22 +73,22 @@ export async function cleanup(options: CleanupOptions = {}) {
         `Found ${objectsToDelete.length} objects older than 1 day`,
       );
     } else if (!options.verbose) {
-      console.log(
+      logger.info(
         `Found ${objectsToDelete.length} objects older than 1 day`,
       );
     }
 
     if (objectsToDelete.length === 0) {
       if (options.verbose) {
-        console.log("No objects to clean up");
+        logger.info("No objects to clean up");
       }
       return;
     }
 
     if (options.dryRun) {
-      console.log("\nDry run mode - would delete the following objects:");
+      logger.info("\nDry run mode - would delete the following objects:");
       for (const obj of objectsToDelete) {
-        console.log(`  - ${obj}`);
+        logger.info(`  - ${obj}`);
       }
       return;
     }
@@ -106,12 +107,12 @@ export async function cleanup(options: CleanupOptions = {}) {
         await client.deleteObject(objectName);
         deletedCount++;
         if (options.verbose) {
-          console.log(`Deleted: ${objectName}`);
+          logger.info(`Deleted: ${objectName}`);
         }
       } catch (error) {
         errors.push({ object: objectName, error });
         if (options.verbose) {
-          console.error(`Failed to delete ${objectName}:`, error);
+          logger.error(`Failed to delete ${objectName}:`, String(error));
         }
       }
     }
@@ -126,18 +127,18 @@ export async function cleanup(options: CleanupOptions = {}) {
       }
     } else if (!options.verbose) {
       if (errors.length > 0) {
-        console.log(
+        logger.info(
           `Deleted ${deletedCount} objects, ${errors.length} failed`,
         );
       } else {
-        console.log(`Successfully deleted ${deletedCount} objects`);
+        logger.info(`Successfully deleted ${deletedCount} objects`);
       }
     }
 
     if (errors.length > 0 && !options.verbose) {
-      console.error("\nFailed to delete the following objects:");
+      logger.error("\nFailed to delete the following objects:");
       for (const { object, error } of errors) {
-        console.error(`  - ${object}: ${error}`);
+        logger.error(`  - ${object}: ${String(error)}`);
       }
     }
   } catch (error) {

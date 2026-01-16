@@ -4,6 +4,7 @@ import process from "node:process";
 
 import type { Command, CommandOptions } from "./command.ts";
 import { getEnvironment } from "../env.ts";
+import logger from "../logger.ts";
 
 export type DefaultArgsFactory<
   O extends Record<string, unknown> = Record<string, unknown>,
@@ -16,7 +17,7 @@ export function runCommand(
 ): Promise<string> {
   const verbose = options?.verbose ?? false;
   if (verbose) {
-    console.log(`$ ${file} ${args.join(" ")}`);
+    logger.info(`$ ${file} ${args.join(" ")}`);
   }
 
   // If the verbose option is enabled, the child process will inherit the

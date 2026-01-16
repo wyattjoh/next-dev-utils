@@ -4,6 +4,7 @@ import path from "node:path";
 import stripIndent from "strip-indent";
 
 import { getNextProjectPath } from "../lib/get-next-project-path.ts";
+import logger from "../lib/logger.ts";
 
 type Options = {
   name: string;
@@ -32,5 +33,5 @@ export async function createReproductionCommand(args: Options) {
   // Create the app/ folder.
   await fs.mkdir(path.join(reproduction, "app"), { recursive: true });
 
-  console.log("Created reproduction folder", reproduction);
+  logger.info("Created reproduction folder", reproduction);
 }

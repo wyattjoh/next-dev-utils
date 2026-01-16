@@ -2,12 +2,14 @@ import clipboard from "clipboardy";
 
 import { pnpm } from "../lib/commands/pnpm.ts";
 import { packNext as packNextLib } from "../lib/pack-next.ts";
+import logger from "../lib/logger.ts";
 
 type Options = {
   json: boolean;
   serve: boolean;
   install: boolean;
   progress: boolean;
+  hashed: boolean;
 };
 
 export async function packNextCommand(options: Options) {
@@ -33,9 +35,9 @@ export async function packNextCommand(options: Options) {
 
   if (!options.json && !options.install) {
     await clipboard.write(url);
-    console.log("\nCopied URL to clipboard 🦄");
+    logger.info("\nCopied URL to clipboard 🦄");
   } else if (options.json) {
-    console.log(url);
+    logger.info(url);
   } else if (options.install) {
     await pnpm(["add", "--prefer-offline", JSON.stringify(url)]);
 

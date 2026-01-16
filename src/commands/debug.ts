@@ -6,6 +6,7 @@ import { execa } from "execa";
 import { next } from "../lib/commands/next.ts";
 import { node } from "../lib/commands/node.ts";
 import process from "node:process";
+import logger from "../lib/logger.ts";
 
 async function removeDotNextDirectory(nextProjectPath: string) {
   const spinner = ora("Removing existing .next directory").start();
@@ -157,7 +158,7 @@ export async function debugCommand(options: Options) {
         run.finally(() => {
           if (controller.signal.aborted) return;
 
-          console.log(
+          logger.info(
             "[next-dev-utils] --run finished, stopping server",
           );
           controller.abort();
@@ -167,7 +168,7 @@ export async function debugCommand(options: Options) {
         start.finally(() => {
           if (controller.signal.aborted) return;
 
-          console.log(
+          logger.info(
             "[next-dev-utils] server finished, stopping --run",
           );
           controller.abort();

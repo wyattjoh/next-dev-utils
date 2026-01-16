@@ -10,6 +10,7 @@ import {
   prompt,
   setConfig,
 } from "../lib/config/config.ts";
+import logger from "../lib/logger.ts";
 
 type Options = {
   operation: "get" | "set" | "convert";
@@ -39,7 +40,7 @@ async function handleGetOperation(args: Options) {
         const formatted = rawValue
           ? JSON.stringify(rawValue, null, 2)
           : "(not set)";
-        console.log(`${key}: ${formatted}`);
+        logger.info(`${key}: ${formatted}`);
       } else {
         // Show resolved format with type indicator
         const resolvedValue = rawValue
@@ -48,7 +49,7 @@ async function handleGetOperation(args: Options) {
         const typeIndicator = isOnePasswordReference(rawValue)
           ? " [1Password]"
           : "";
-        console.log(`${key}: ${resolvedValue ?? "(not set)"}${typeIndicator}`);
+        logger.info(`${key}: ${resolvedValue ?? "(not set)"}${typeIndicator}`);
       }
     }
     return;
@@ -60,13 +61,13 @@ async function handleGetOperation(args: Options) {
     const formatted = rawValue
       ? JSON.stringify(rawValue, null, 2)
       : "(not set)";
-    console.log(formatted);
+    logger.info(formatted);
   } else {
     const resolvedValue = rawValue ? await getConfig(args.key) : undefined;
     const typeIndicator = isOnePasswordReference(rawValue)
       ? " [1Password]"
       : "";
-    console.log(`${resolvedValue ?? "(not set)"}${typeIndicator}`);
+    logger.info(`${resolvedValue ?? "(not set)"}${typeIndicator}`);
   }
 }
 
@@ -91,7 +92,7 @@ async function handleSetOperation(args: Options) {
   const typeMsg = isOnePasswordReference(configValue)
     ? " as 1Password reference"
     : "";
-  console.log(`Set ${args.key}${typeMsg}`);
+  logger.info(`Set ${args.key}${typeMsg}`);
 }
 
 async function handleConvertOperation(args: Options) {
@@ -105,7 +106,7 @@ async function handleConvertOperation(args: Options) {
   }
 
   if (isOnePasswordReference(rawValue)) {
-    console.log(`${args.key} is already a 1Password reference`);
+    logger.info(`${args.key} is already a 1Password reference`);
     return;
   }
 
@@ -113,8 +114,8 @@ async function handleConvertOperation(args: Options) {
     throw new Error(`Cannot convert ${args.key}: not a string value`);
   }
 
-  console.log(`Current value: ${rawValue}`);
-  console.log("Enter the 1Password reference (op://vault/item/field):");
+  logger.info(`Current value: ${rawValue}`);
+  logger.info("Enter the 1Password reference (op://vault/item/field):");
 
   const reference = await prompt(args.key, {
     validate: (value: string) => {
@@ -128,7 +129,7 @@ async function handleConvertOperation(args: Options) {
   const onePasswordRef = createOnePasswordReference(reference);
   await setConfig(args.key, onePasswordRef);
 
-  console.log(`Converted ${args.key} to 1Password reference: ${reference}`);
+  logger.info(`Converted ${args.key} to 1Password reference: ${reference}`);
 }
 
 function processConfigValue(

@@ -11,6 +11,7 @@ import { Confirm } from "@cliffy/prompt";
 
 import { pnpm } from "./commands/pnpm.ts";
 import { getConfig } from "./config/config.ts";
+import logger from "./logger.ts";
 
 /**
  * Options for the pack operation.
@@ -28,6 +29,8 @@ export type PackOptions = {
   verbose?: boolean;
   /** Abort signal for cancelling the operation. */
   signal?: AbortSignal | undefined;
+  /** If true, the filename will include the hash of the content. */
+  hashed: boolean;
 };
 
 /**
@@ -47,6 +50,7 @@ export type PackOptions = {
  * @param options.progress - If true, shows progress indicators.
  * @param options.verbose - If true, enables verbose logging.
  * @param options.signal - Abort signal for cancelling long-running operations.
+ * @param options.hashed - If true, the filename will include the hash of the content.
  *
  * @returns The URL where the packed tarball can be accessed (either S3 or local server).
  *
@@ -115,7 +119,7 @@ export async function pack(
 
     packedFile = path.basename(absolutePackedFile);
   } catch (err) {
-    console.error(err);
+    logger.error(String(err));
     if (spinner) spinner.fail(`Packing ${name} failed`);
     process.exit(1);
   }
@@ -133,11 +137,29 @@ export async function pack(
     hash.update(fileContent);
     md5 = hash.digest("hex");
   } catch (err) {
-    console.error(err);
+    logger.error(String(err));
     if (spinner) spinner.fail("Calculating md5 hash of packed file failed");
     process.exit(1);
   }
   if (spinner) spinner.succeed(`Calculated md5 hash of packed file: ${md5}`);
+
+  // If the `--hashed` flag is provided, the file needs to be renamed to include
+  // the hash of the content.
+  if (options.hashed) {
+    const hashedAbsolutePackedFile = absolutePackedFile.replace(
+      /\.tgz$/,
+      `.${md5}.tgz`,
+    );
+    if (!hashedAbsolutePackedFile.includes(md5)) {
+      throw new Error(
+        "Renaming the packed file with the hash of the content failed",
+      );
+    }
+
+    await fs.rename(absolutePackedFile, hashedAbsolutePackedFile);
+    absolutePackedFile = hashedAbsolutePackedFile;
+    packedFile = path.basename(absolutePackedFile);
+  }
 
   // If the `--serve` flag is provided, serve via a local web server instead of
   // uploading this to storage.
@@ -162,7 +184,7 @@ export async function pack(
         return;
       }
 
-      console.log(`Serving ${packedFile}...`);
+      logger.info(`Serving ${packedFile}...`);
 
       res.writeHead(200, {
         "Content-Type": "application/octet-stream",
@@ -199,7 +221,7 @@ export async function pack(
     const url = `http://127.0.0.1:${port}/${packedFile}?md5=${md5}`;
 
     if (options.verbose) {
-      console.log(`\nURL: ${url}`);
+      logger.info(`\nURL: ${url}`);
     }
 
     return url;
@@ -266,7 +288,7 @@ export async function pack(
       } catch (err) {
         if (spinner) spinner.fail("Uploading file to bucket failed");
 
-        console.error(err);
+        logger.error(String(err));
 
         const retry = await Confirm.prompt({
           message: "Retry?",

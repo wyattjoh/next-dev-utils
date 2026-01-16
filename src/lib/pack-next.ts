@@ -6,6 +6,7 @@ import ora from "ora";
 import { pack, type PackOptions } from "./pack.ts";
 import process from "node:process";
 import { getNextProjectPath } from "./get-next-project-path.ts";
+import logger from "./logger.ts";
 
 async function getPackageJSON(version: string) {
   let json: string;
@@ -19,7 +20,7 @@ async function getPackageJSON(version: string) {
     if (!res.ok) throw new Error("Failed to fetch package.json");
     json = await res.text();
   } catch {
-    console.error("Failed, falling back to latest version...");
+    logger.error("Failed, falling back to latest version...");
 
     // The fetch failed, fallback to the latest version.
     const res = await fetch("https://registry.npmjs.org/next/canary", {
@@ -85,7 +86,9 @@ type PackNextOptions = PackOptions & {
  * await packNext({ dryRun: true, verbose: true });
  * ```
  */
-export async function packNext(options: PackNextOptions = {}): Promise<string> {
+export async function packNext(
+  options: PackNextOptions = { hashed: false },
+): Promise<string> {
   const nextProjectPath: string = options.nextProjectPath ??
     await getNextProjectPath();
   const next = path.join(nextProjectPath, "packages", "next");
@@ -107,7 +110,7 @@ export async function packNext(options: PackNextOptions = {}): Promise<string> {
     // If the remote version is different than the local version, we need to use
     // the remote version's package.json.
     if (remote.version !== version) {
-      console.error(
+      logger.error(
         "Using remote package.json, local version doesn't exist. Local edits to package.json will be ignored.",
       );
 
@@ -136,7 +139,7 @@ export async function packNext(options: PackNextOptions = {}): Promise<string> {
       );
     }
   } catch (err) {
-    console.error(err);
+    logger.error(String(err));
     if (spinner) spinner.fail("Getting optional deps from npm failed");
     process.exit(1);
   }
@@ -152,7 +155,7 @@ export async function packNext(options: PackNextOptions = {}): Promise<string> {
 
     if (spinner) spinner.succeed("Restored package.json");
   } catch (err) {
-    console.error(err);
+    logger.error(String(err));
     if (spinner) spinner.fail("Restoring package.json failed");
     process.exit(1);
   }
