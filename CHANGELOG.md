@@ -1,5 +1,31 @@
 # next-dev-utils
 
+## 2.4.0
+
+### Minor Changes
+
+- Automatic SWC binary packaging for `pack-next` command
+
+  - SWC binaries are now automatically included when present (removed `--include-swc` flag)
+  - Added `--swc-platforms` flag to filter which platforms to include (e.g., `--swc-platforms darwin-arm64,linux-x64-gnu`)
+  - Added `--dry-run` flag to preview what would be packaged without uploading
+  - Added binary validation to verify files are readable before packaging
+  - Improved progress feedback showing platform names as they complete
+  - Better error handling: exits on complete SWC failure, warns on partial failure
+
+- Improved version mismatch handling
+
+  - More prominent warnings when local version doesn't match npm registry
+  - Clear explanation that local package.json edits will be ignored in this case
+
+- Added `warn` method to logger for warning-level messages
+
+### Patch Changes
+
+- 31806d2: Hashed filenames are now always used (hash embedded in filename for cache-busting)
+- 31806d2: Multi-file support for `test-deploy` command
+- Add timeout to fallback npm registry fetch (prevents hanging on slow networks)
+
 ## 2.0.1
 
 ### Patch Changes

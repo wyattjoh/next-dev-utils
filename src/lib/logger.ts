@@ -13,6 +13,16 @@ function info(message: string, ...args: unknown[]) {
   }
 }
 
+function warn(message: string, ...args: unknown[]) {
+  let line = `[WARN] ${message}`;
+  if (args.length > 0) {
+    line += ` ${args.join(" ")}`;
+  }
+  line += "\n";
+
+  Deno.stderr.writeSync(new TextEncoder().encode(line));
+}
+
 function error(message: string, ...args: unknown[]) {
   let line = message;
   if (args.length > 0) {
@@ -25,6 +35,7 @@ function error(message: string, ...args: unknown[]) {
 
 const logger = {
   info,
+  warn,
   error,
 };
 

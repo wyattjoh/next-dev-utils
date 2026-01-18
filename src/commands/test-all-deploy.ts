@@ -9,7 +9,6 @@ import logger from "../lib/logger.ts";
 type Options = {
   proxy?: string | undefined;
   vercelCliVersion: string;
-  hashed: boolean;
 };
 
 export async function testAllDeployCommand(options: Options) {
@@ -23,7 +22,6 @@ export async function testAllDeployCommand(options: Options) {
   const nextVersion = await packNextLib({
     progress: true,
     nextProjectPath,
-    hashed: options.hashed,
   });
 
   const args: string[] = [

@@ -8,7 +8,6 @@ type Options = {
   serve: boolean;
   progress: boolean;
   verbose: boolean;
-  hashed: boolean;
 };
 
 export async function packCommand(options: Options) {

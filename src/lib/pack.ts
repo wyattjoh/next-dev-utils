@@ -29,8 +29,8 @@ export type PackOptions = {
   verbose?: boolean;
   /** Abort signal for cancelling the operation. */
   signal?: AbortSignal | undefined;
-  /** If true, the filename will include the hash of the content. */
-  hashed: boolean;
+  /** Skip interactive retry prompts (for parallel execution). */
+  nonInteractive?: boolean;
 };
 
 /**
@@ -50,7 +50,6 @@ export type PackOptions = {
  * @param options.progress - If true, shows progress indicators.
  * @param options.verbose - If true, enables verbose logging.
  * @param options.signal - Abort signal for cancelling long-running operations.
- * @param options.hashed - If true, the filename will include the hash of the content.
  *
  * @returns The URL where the packed tarball can be accessed (either S3 or local server).
  *
@@ -143,23 +142,20 @@ export async function pack(
   }
   if (spinner) spinner.succeed(`Calculated md5 hash of packed file: ${md5}`);
 
-  // If the `--hashed` flag is provided, the file needs to be renamed to include
-  // the hash of the content.
-  if (options.hashed) {
-    const hashedAbsolutePackedFile = absolutePackedFile.replace(
-      /\.tgz$/,
-      `.${md5}.tgz`,
+  // Rename the file to include the hash of the content for cache-busting.
+  const hashedAbsolutePackedFile = absolutePackedFile.replace(
+    /\.tgz$/,
+    `.${md5}.tgz`,
+  );
+  if (!hashedAbsolutePackedFile.includes(md5)) {
+    throw new Error(
+      "Renaming the packed file with the hash of the content failed",
     );
-    if (!hashedAbsolutePackedFile.includes(md5)) {
-      throw new Error(
-        "Renaming the packed file with the hash of the content failed",
-      );
-    }
-
-    await fs.rename(absolutePackedFile, hashedAbsolutePackedFile);
-    absolutePackedFile = hashedAbsolutePackedFile;
-    packedFile = path.basename(absolutePackedFile);
   }
+
+  await fs.rename(absolutePackedFile, hashedAbsolutePackedFile);
+  absolutePackedFile = hashedAbsolutePackedFile;
+  packedFile = path.basename(absolutePackedFile);
 
   // If the `--serve` flag is provided, serve via a local web server instead of
   // uploading this to storage.
@@ -289,6 +285,10 @@ export async function pack(
         if (spinner) spinner.fail("Uploading file to bucket failed");
 
         logger.error(String(err));
+
+        if (options.nonInteractive) {
+          throw new Error(`Failed to upload ${packedFile}: ${String(err)}`);
+        }
 
         const retry = await Confirm.prompt({
           message: "Retry?",

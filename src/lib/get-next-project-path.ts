@@ -54,9 +54,12 @@ export async function getNextProjectPath(): Promise<string> {
     process.env.NEXT_PROJECT_PATH ?? (await getConfig("next_project_path"));
 
   // If the base path is a git worktree, use the worktree's path.
+  // Check if cwd is within any of the worktrees.
+  const cwd = process.cwd();
   const worktrees = await getGitWorktrees(base);
   for (const worktree of worktrees) {
-    if (worktree.path.startsWith(process.cwd())) {
+    // Check if cwd starts with the worktree path (i.e., we're inside this worktree)
+    if (cwd.startsWith(worktree.path)) {
       logger.info(
         `Using worktree ${worktree.path} for ${worktree.branch} at ${worktree.commit}`,
       );

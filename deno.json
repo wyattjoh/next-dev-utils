@@ -1,6 +1,6 @@
 {
   "name": "@wyattjoh/next-dev-utils",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "exports": {
     ".": "./src/cli.ts",
     "./lib": "./src/lib/index.ts"
@@ -11,6 +11,7 @@
     "include": ["src/**/*.ts", "README.md", "LICENSE"]
   },
   "tasks": {
+    "install": "deno install --allow-all --force --global --config deno.json --name=nu src/cli.ts",
     "build": "deno compile --allow-all --output=./nu src/cli.ts",
     "hooks:install": "deno run --allow-read=deno.json,.git/hooks/ --allow-write=.git/hooks/ jsr:@hongminhee/deno-task-hooks",
     "hooks:pre-commit": "deno check && deno fmt --check && deno lint",

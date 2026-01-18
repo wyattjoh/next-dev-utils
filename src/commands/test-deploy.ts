@@ -10,7 +10,6 @@ import logger from "../lib/logger.ts";
 
 type Options = {
   "test-file": string[];
-  hashed: boolean;
 };
 
 export async function testDeployCommand(options: Options) {
@@ -56,7 +55,7 @@ export async function testDeployCommand(options: Options) {
   const VERCEL_TEST_TOKEN = await getConfig("vercel_test_token");
 
   // Pack the next project.
-  const url = await packNext({ progress: true, hashed: options.hashed });
+  const url = await packNext({ progress: true });
 
   // Start the test deploy. If this fails, the error will be printed to the
   // console because it'll throw.

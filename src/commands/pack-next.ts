@@ -9,7 +9,8 @@ type Options = {
   serve: boolean;
   install: boolean;
   progress: boolean;
-  hashed: boolean;
+  swcPlatforms: string[] | undefined;
+  dryRun: boolean;
 };
 
 export async function packNextCommand(options: Options) {
@@ -19,6 +20,14 @@ export async function packNextCommand(options: Options) {
 
   if (options.json && options.install) {
     throw new Error("Cannot use --json and --install together");
+  }
+
+  if (options.dryRun && options.serve) {
+    throw new Error("Cannot use --dry-run and --serve together");
+  }
+
+  if (options.dryRun && options.install) {
+    throw new Error("Cannot use --dry-run and --install together");
   }
 
   let controller: AbortController | undefined;
@@ -31,11 +40,19 @@ export async function packNextCommand(options: Options) {
     ...options,
     progress: options.json || options.install || options.progress,
     signal: controller?.signal,
+    swcPlatforms: options.swcPlatforms,
+    dryRun: options.dryRun,
   });
+
+  // In dry-run mode, don't do clipboard or install operations
+  if (options.dryRun) {
+    logger.info("\n[DRY RUN] Complete. No packages were uploaded.");
+    return;
+  }
 
   if (!options.json && !options.install) {
     await clipboard.write(url);
-    logger.info("\nCopied URL to clipboard 🦄");
+    logger.info("\nCopied URL to clipboard");
   } else if (options.json) {
     logger.info(url);
   } else if (options.install) {

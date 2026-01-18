@@ -15,6 +15,11 @@ import { exists } from "./validators/exists.ts";
 import logger from "../logger.ts";
 
 /**
+ * Cache for resolved 1Password secrets to avoid multiple prompts within a session.
+ */
+const secretCache = new Map<string, string>();
+
+/**
  * 1Password reference object type.
  */
 export type OnePasswordReference = {
@@ -112,11 +117,21 @@ export function isOnePasswordReferenceString(value: string): boolean {
 
 /**
  * Resolves a 1Password secret reference using the `op read` command.
+ * Results are cached to avoid multiple prompts within a session.
  */
 async function resolveOnePasswordSecret(reference: string): Promise<string> {
+  // Check cache first to avoid repeated 1Password prompts
+  const cached = secretCache.get(reference);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   try {
     const { stdout } = await execa("op", ["read", reference]);
-    return stdout.trim();
+    const resolved = stdout.trim();
+    // Cache the result for future calls
+    secretCache.set(reference, resolved);
+    return resolved;
   } catch (error) {
     const err = error as Error;
     const exitCode = "exitCode" in err
