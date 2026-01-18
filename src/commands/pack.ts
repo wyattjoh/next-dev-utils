@@ -15,11 +15,11 @@ export async function packCommand(options: Options) {
     throw new Error("Cannot use --json and --serve together");
   }
 
-  const url = await packLib({
+  const { url } = await packLib({
     ...options,
     progress: options.json || options.progress,
   });
   await clipboard.write(url);
-  if (!options.json) logger.info("\nCopied URL to clipboard 🦄");
+  if (!options.json) logger.info("\nCopied URL to clipboard");
   if (options.json) logger.info(url);
 }

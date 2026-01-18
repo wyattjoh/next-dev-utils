@@ -7,6 +7,7 @@ import ora, { type Ora } from "ora";
 import { pack, type PackOptions } from "./pack.ts";
 import process from "node:process";
 import { getNextProjectPath } from "./get-next-project-path.ts";
+import { getConfig } from "./config/config.ts";
 import logger from "./logger.ts";
 
 const FETCH_TIMEOUT_MS = 10000;
@@ -146,7 +147,7 @@ async function findAvailableSwcPlatforms(
   // Filter platforms if a filter is provided
   const platformsToCheck = platformFilter
     ? SWC_PLATFORMS.filter((p) =>
-      platformFilter.includes(p.dir as typeof platformFilter[number])
+      platformFilter.includes(p.dir as (typeof platformFilter)[number])
     )
     : SWC_PLATFORMS;
 
@@ -159,7 +160,9 @@ async function findAvailableSwcPlatforms(
     if (unknownPlatforms.length > 0) {
       logger.warn(
         `Unknown SWC platform(s): ${
-          unknownPlatforms.join(", ")
+          unknownPlatforms.join(
+            ", ",
+          )
         }. Valid platforms: ${validDirs.join(", ")}`,
       );
     }
@@ -201,6 +204,8 @@ type SwcPackResult = {
   platform: (typeof SWC_PLATFORMS)[number];
   status: "success" | "failed" | "dry-run";
   url?: string;
+  /** True if the file was newly uploaded, false if it was reused from existing. */
+  uploaded?: boolean;
   error?: string;
 };
 
@@ -288,7 +293,7 @@ async function packSwcPlatforms(
 
   const updateProgress = (
     platformName: string,
-    status: "success" | "failed",
+    status: "uploaded" | "reused" | "failed",
   ) => {
     completedCount++;
     completedPlatforms.push(`${platformName} (${status})`);
@@ -324,14 +329,20 @@ async function packSwcPlatforms(
 
           try {
             // Pack and upload (nonInteractive to avoid prompts in parallel)
-            const url = await pack({
+            const result = await pack({
               ...options,
               cwd: packageDir,
               nonInteractive: true,
               progress: false, // Disable individual spinners for parallel execution
             });
-            updateProgress(platform.dir, "success");
-            return { platform, status: "success", url };
+            const uploadStatus = result.uploaded ? "uploaded" : "reused";
+            updateProgress(platform.dir, uploadStatus);
+            return {
+              platform,
+              status: "success",
+              url: result.url,
+              uploaded: result.uploaded,
+            };
           } finally {
             // Restore original package.json and remove copied binary
             await fs.writeFile(pkgJsonPath, originalPkgJson, "utf8");
@@ -354,17 +365,25 @@ async function packSwcPlatforms(
   // Update spinner with final status
   if (spinner) {
     if (failed.length === 0) {
+      // Format each platform with its upload status
+      const platformStatuses = successful
+        .map((r) => `${r.platform.dir} (${r.uploaded ? "uploaded" : "reused"})`)
+        .join(", ");
       spinner.succeed(
-        `Packaged ${successful.length}/${totalPlatforms} SWC platform(s): ${
-          successful.map((r) => r.platform.dir).join(", ")
-        }`,
+        `Packaged ${successful.length}/${totalPlatforms} SWC platform(s): ${platformStatuses}`,
       );
     } else if (successful.length === 0) {
       spinner.fail(`All ${totalPlatforms} SWC platform(s) failed to package`);
     } else {
+      // Format successful platforms with their upload status
+      const platformStatuses = successful
+        .map((r) => `${r.platform.dir} (${r.uploaded ? "uploaded" : "reused"})`)
+        .join(", ");
       spinner.warn(
-        `Packaged ${successful.length}/${totalPlatforms} SWC platform(s) (${failed.length} failed: ${
-          failed.map((r) => r.platform.dir).join(", ")
+        `Packaged ${successful.length}/${totalPlatforms} SWC platform(s): ${platformStatuses} (${failed.length} failed: ${
+          failed
+            .map((r) => r.platform.dir)
+            .join(", ")
         })`,
       );
     }
@@ -413,9 +432,17 @@ async function packSwcPlatforms(
  * await packNext({ dryRun: true, verbose: true });
  * ```
  */
-export async function packNext(
-  options: PackNextOptions = {},
-): Promise<string> {
+export async function packNext(options: PackNextOptions = {}): Promise<string> {
+  // Pre-resolve 1Password secrets early to avoid multiple prompts during parallel SWC packaging.
+  // We only need to do this if we're not in dry-run mode and not serving locally.
+  if (!options.dryRun && !options.serve) {
+    // Load non-secret configs in parallel
+    await Promise.all([getConfig("endpoint"), getConfig("bucket")]);
+    // Load secrets sequentially to allow vault unlock on first prompt
+    await getConfig("access_key");
+    await getConfig("secret_key");
+  }
+
   const nextProjectPath: string = options.nextProjectPath ??
     (await getNextProjectPath());
 
@@ -468,7 +495,9 @@ export async function packNext(
     if (options.swcPlatforms && swcResult.totalPlatforms === 0) {
       logger.error(
         `\nNo SWC platform binaries found matching: ${
-          options.swcPlatforms.join(", ")
+          options.swcPlatforms.join(
+            ", ",
+          )
         }`,
       );
       logger.error(
@@ -552,7 +581,7 @@ export async function packNext(
   }
 
   // Pack the package.
-  const url = await pack({ ...options, cwd: next });
+  const { url } = await pack({ ...options, cwd: next });
 
   if (options.progress) {
     spinner = ora("Restoring package.json...").start();

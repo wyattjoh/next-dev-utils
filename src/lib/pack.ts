@@ -14,6 +14,16 @@ import { getConfig } from "./config/config.ts";
 import logger from "./logger.ts";
 
 /**
+ * Result of the pack operation.
+ */
+export type PackResult = {
+  /** The URL where the packed tarball can be accessed. */
+  url: string;
+  /** True if the file was newly uploaded, false if it was reused from existing. */
+  uploaded: boolean;
+};
+
+/**
  * Options for the pack operation.
  */
 export type PackOptions = {
@@ -51,22 +61,23 @@ export type PackOptions = {
  * @param options.verbose - If true, enables verbose logging.
  * @param options.signal - Abort signal for cancelling long-running operations.
  *
- * @returns The URL where the packed tarball can be accessed (either S3 or local server).
+ * @returns An object containing the URL and upload status.
  *
  * @example
  * ```ts
  * // Pack and upload to S3
- * const url = await pack({ progress: true });
- * console.log(`Package available at: ${url}`);
+ * const result = await pack({ progress: true });
+ * console.log(`Package available at: ${result.url}`);
+ * console.log(`Was uploaded: ${result.uploaded}`);
  *
  * // Serve locally for testing
- * const localUrl = await pack({ serve: true, verbose: true });
- * console.log(`Serving package at: ${localUrl}`);
+ * const result = await pack({ serve: true, verbose: true });
+ * console.log(`Serving package at: ${result.url}`);
  * ```
  */
 export async function pack(
   { cwd = process.cwd(), ...options }: PackOptions,
-): Promise<string> {
+): Promise<PackResult> {
   // Create the temporary folder.
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "next-dev-utils-"));
 
@@ -220,7 +231,8 @@ export async function pack(
       logger.info(`\nURL: ${url}`);
     }
 
-    return url;
+    // Local serve is always considered "uploaded" since there's no existing check
+    return { url, uploaded: true };
   }
 
   const ENDPOINT = await getConfig("endpoint");
@@ -315,6 +327,6 @@ export async function pack(
 
   if (spinner) spinner.succeed(`Signed URL: ${url}`);
 
-  // Return the URL to the uploaded file.
-  return url;
+  // Return the URL and upload status.
+  return { url, uploaded: !exists };
 }
